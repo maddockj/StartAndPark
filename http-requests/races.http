@@ -1,0 +1,22 @@
+@hostname = https://localhost
+@port = 5001
+@host = {{hostname}}:{{port}}
+
+###
+
+GET {{host}}/api/races
+###
+
+GET {{host}}/api/races/1
+
+###
+
+POST {{host}}/api/races
+Content-Type: application/json
+
+{
+  "name": ""
+}
+###
+
+DELETE {{host}}/api/races/1

@@ -1,0 +1,34 @@
+@hostname = https://localhost
+@port = 5001
+@host = {{hostname}}:{{port}}
+
+###
+
+GET {{host}}/api/fantasy-teams
+
+###
+
+GET {{host}}/api/fantasy-teams/-1
+
+###
+
+POST {{host}}/api/fantasy-teams
+Content-Type: application/json
+
+{
+  "name": "Outeos 2nd"
+}
+
+###
+
+PUT {{host}}/api/fantasy-teams/7
+Content-Type: application/json
+
+{
+  "id": 7,
+  "name": "Creasote"
+}
+
+###
+
+DELETE {{host}}/api/fantasy-teams/6

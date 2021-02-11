@@ -1,0 +1,21 @@
+﻿@page "/races/create"
+
+@inject HttpClient http
+@inject NavigationManager navigationManager
+
+<h3>Create Race</h3>
+
+<RaceForm
+      ButtonText="Create Race"
+      race="@race"
+      OnValidSubmit="@Submit" />
+
+@code {
+    Race race = new Race();
+
+    async Task Submit()
+    {
+        await http.PostAsJsonAsync("api/races", race);
+        navigationManager.NavigateTo("races");
+    }
+}

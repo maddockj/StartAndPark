@@ -1,0 +1,26 @@
+﻿@page "/races/{raceId:int}/edit"
+
+@inject HttpClient http
+@inject NavigationManager navigationManager
+
+<h3>Edit Race</h3>
+
+<RaceForm ButtonText="Save"
+          race="@race"
+          OnValidSubmit="@Submit" />
+
+@code {
+    [Parameter] public int raceId { get; set; }
+    Race race = new Race();
+
+    protected override async Task OnInitializedAsync()
+    {
+        race = await http.GetFromJsonAsync<Race>($"api/races/{raceId}");
+    }
+
+    async Task Submit()
+    {
+        await http.PutAsJsonAsync($"api/races/{race.Id}", race);
+        navigationManager.NavigateTo("races");
+    }
+}

@@ -1,0 +1,50 @@
+﻿@page "/races"
+
+@inject HttpClient Http
+
+<MatHeadline2>Races</MatHeadline2>
+<div>
+    <MatButton Link="races/create">Create New</MatButton>
+</div>
+
+@if (races == null)
+{
+    <Loader />
+}
+else if (races.Length == 0)
+{
+    <MatBody1 Style="font-weight: bolder"><em>No Races Found.</em></MatBody1>
+}
+else
+{
+    <MatTable Items="@races"
+              FilterByColumnName="Name"
+              ShowPaging="false"
+              PageSize="int.MaxValue"
+              Striped="true">
+        <MatTableHeader>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Team Size</th>
+            <th></th>
+        </MatTableHeader>
+        <MatTableRow>
+            <td>@context.Id</td>
+            <td>@context.Name</td>
+            <td>@context.FantasyTeamSize</td>
+            <td>
+                <MatIconButton Link="@($"races/{context.Id}/edit")" Icon="edit" />
+                <MatButton Link=@($"races/{context.Id}/entries")>Entries</MatButton>
+            </td>
+        </MatTableRow>
+    </MatTable>
+}
+
+@code {
+    private Race[] races;
+
+    protected override async Task OnInitializedAsync()
+    {
+        races = await Http.GetFromJsonAsync<Race[]>("api/races");
+    }
+}

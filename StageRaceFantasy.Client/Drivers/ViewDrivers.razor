@@ -1,0 +1,61 @@
+﻿@page "/riders"
+
+@inject HttpClient httpClient
+@inject IJSRuntime js
+
+<MatHeadline2>Drivers</MatHeadline2>
+<div>
+    <MatButton Link="riders/create">Create New</MatButton>
+</div>
+
+@if (drivers == null)
+{
+    <Loader />
+}
+else if (drivers.Length == 0)
+{
+    <MatBody1 Style="font-weight: bolder"><em>No Drivers Found.</em></MatBody1>
+}
+else
+{
+    <MatTable Items="@drivers"
+              FilterByColumnName="LastName"
+              ShowPaging="false"
+              PageSize="int.MaxValue"
+              Striped="true">
+        <MatTableHeader>
+            <th>Id</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th></th>
+        </MatTableHeader>
+        <MatTableRow>
+            <td>@context.Id</td>
+            <td>@context.FirstName</td>
+            <td>@context.LastName</td>
+            <td>
+                <MatIconButton @onclick="@(() => DeleteDriver(context.Id))" Icon="delete" Style="color: red" />
+            </td>
+        </MatTableRow>
+    </MatTable>
+}
+
+@code {
+    private Driver[] drivers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        drivers = await httpClient.GetFromJsonAsync<Driver[]>("api/riders");
+    }
+
+    async Task DeleteDriver(int driverId)
+    {
+        var driver = drivers.First(x => x.Id == driverId);
+
+        if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete driver {driver.FirstName} {driver.LastName}?"))
+        {
+            await httpClient.DeleteAsync($"api/riders/{driver.Id}");
+            await OnInitializedAsync();
+        }
+    }
+}

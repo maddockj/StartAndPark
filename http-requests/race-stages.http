@@ -1,0 +1,21 @@
+@hostname = https://localhost
+@port = 5001
+@host = {{hostname}}:{{port}}
+
+###
+
+GET {{host}}/api/races/2/stages
+
+###
+
+GET {{host}}/api/races/2/stages/5
+
+###
+
+POST {{host}}/api/races/2/stages
+Content-Type: application/json
+
+{
+  "StartLocation": "Leeds",
+  "FinishLocation": "Newcastle"
+}

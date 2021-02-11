@@ -1,0 +1,20 @@
+﻿@page "/fantasy-teams/create"
+
+@inject HttpClient http
+@inject NavigationManager navigationManager
+
+<h3>New Owner</h3>
+
+<OwnerForm ButtonText="Create Owner"
+                 team="@owner"
+                 OnValidSubmit="@Submit" />
+
+@code {
+    Owner owner = new Owner();
+
+    async Task Submit()
+    {
+        await http.PostAsJsonAsync("api/fantasy-teams", owner);
+        navigationManager.NavigateTo("fantasy-teams");
+    }
+}

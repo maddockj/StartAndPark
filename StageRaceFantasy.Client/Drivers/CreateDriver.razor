@@ -1,0 +1,21 @@
+﻿@page "/riders/create"
+
+@inject HttpClient http
+@inject NavigationManager navigationManager
+
+<h3>Create Driver</h3>
+
+<DriverForm
+      ButtonText="Create Driver"
+      driver="@driver"
+      OnValidSubmit="@Submit" />
+
+@code {
+    Driver driver = new Driver();
+
+    async Task Submit()
+    {
+        await http.PostAsJsonAsync("api/riders", driver);
+        navigationManager.NavigateTo("riders");
+    }
+}

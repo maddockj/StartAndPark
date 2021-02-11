@@ -1,0 +1,34 @@
+@hostname = https://localhost
+@port = 5001
+@host = {{hostname}}:{{port}}
+
+###
+
+GET {{host}}/api/races/1/entries
+
+###
+
+GET {{host}}/api/races/1/entries/2
+
+###
+
+POST {{host}}/api/races/1/entries
+Content-Type: application/json
+
+{
+  "RiderId": 1,
+  "BibNumber": 103
+}
+
+###
+
+PUT {{host}}/api/races/4/entries/1
+Content-Type: application/json
+
+{
+  "BibNumber": 15
+}
+
+###
+
+DELETE {{host}}/api/races/4/entries/3
