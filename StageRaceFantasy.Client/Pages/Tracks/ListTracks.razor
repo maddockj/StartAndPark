@@ -1,0 +1,9 @@
+﻿@page "/tracks"
+
+@using StartAndPark.Client.Components
+
+<ManagementListPage TItem="Track"
+                    Title="Tracks"
+                    IdField="@(x => x.Id)"
+                    NameField="@(x => x.Name)"
+                    ManagePath="tracks" />

@@ -14,18 +14,18 @@ namespace StartAndPark.Application.IntegrationTests.Races.Commands
         [Test]
         public async Task ShouldRequireMinimumFields()
         {
-            var command = new CreateRaceCommand();
+            var command = new CreateTrackCommand();
 
             var result = await SendAsync(command);
 
             result.IsBadRequest.Should().BeTrue();
-            result.ValidationFailures.Should().ContainNotEmptyValidationErrorForProperty(nameof(CreateRaceCommand.Name));
+            result.ValidationFailures.Should().ContainNotEmptyValidationErrorForProperty(nameof(CreateTrackCommand.Name));
         }
 
         [Test]
         public async Task ShouldCreateRace()
         {
-            var command = new CreateRaceCommand()
+            var command = new CreateTrackCommand()
             {
                 Name = "Tour de France 2020",
             };

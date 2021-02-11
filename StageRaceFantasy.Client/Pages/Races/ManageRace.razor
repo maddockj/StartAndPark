@@ -1,0 +1,48 @@
+﻿@page "/races/{RaceId:int}"
+
+@using StartAndPark.Client.Components
+@using StartAndPark.Client.Components.Forms
+
+@inject HttpClient http
+@inject NavigationManager navigationManager
+
+<ManagementPage TItem="Race"
+                ManagePath="races"
+                Title="Race"
+                IdField="@(x => x.Id)"
+                ItemId="@RaceId">
+        <InputGroup Label="Race Name" Colspan="12">
+            <InputText @bind-Value="@context.Name" class="form-control form-control-sm" id="Name" />
+        </InputGroup>
+
+        <InputGroup Label="Track" Colspan="12" ContainerClass="pt-2">
+            <InputSelect @bind-Value="@context.TrackId" class="form-control form-control-sm" id="Track" >
+                <option></option>
+                @foreach (var track in _tracks)
+                {
+                    <option value="@track.Id">@track.Name</option>
+                }
+            </InputSelect>
+        </InputGroup>
+</ManagementPage>
+
+@code {
+    [Parameter]
+    public int RaceId { get; set; }
+
+    private IEnumerable<Track> _tracks = new Track[0];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var list = await LoadTracks();
+        _tracks = list.OrderBy(x => x.Name);
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task<Track[]> LoadTracks()
+    {
+        // testing
+        return await http.GetFromJsonAsync<Track[]>($"api/tracks");
+    }
+}

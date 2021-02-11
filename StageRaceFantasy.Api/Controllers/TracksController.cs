@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StartAndPark.Application.Common.Interfaces;
-using StartAndPark.Application.Races.Commands.Create;
+using StartAndPark.Application.Tracks.Commands.Create;
 using StartAndPark.Domain.Entities;
 using StartAndPark.Server.Controllers.Utils;
 
@@ -13,51 +13,51 @@ namespace StartAndPark.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RacesController : ControllerBase
+    public class TracksController : ControllerBase
     {
         private readonly IApplicationDbContext _context;
         private readonly IMediator _mediator;
 
-        public RacesController(IApplicationDbContext context, IMediator mediator)
+        public TracksController(IApplicationDbContext context, IMediator mediator)
         {
             _context = context;
             _mediator = mediator;
         }
 
-        // GET: api/Races
+        // GET: api/Tracks
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Race>>> GetRaces()
+        public async Task<ActionResult<IEnumerable<Track>>> GetTracks()
         {
-            return await _context.Races
+            return await _context.Tracks
                 .OrderBy(x => x.Name)
                 .ToListAsync();
         }
 
-        // GET: api/Races/5
+        // GET: api/Tracks/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Race>> GetRace(int id)
+        public async Task<ActionResult<Track>> GetTrack(int id)
         {
-            var race = await _context.Races.FindAsync(id);
+            var track = await _context.Tracks.FindAsync(id);
 
-            if (race == null)
+            if (track == null)
             {
                 return NotFound();
             }
 
-            return race;
+            return track;
         }
 
-        // PUT: api/Races/5
+        // PUT: api/Tracks/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRace(int id, Race race)
+        public async Task<IActionResult> PutTrack(int id, Track track)
         {
-            if (id != race.Id)
+            if (id != track.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(race).State = EntityState.Modified;
+            _context.Entry(track).State = EntityState.Modified;
 
             try
             {
@@ -65,7 +65,7 @@ namespace StartAndPark.Server.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RaceExists(id))
+                if (!TrackExists(id))
                 {
                     return NotFound();
                 }
@@ -78,39 +78,39 @@ namespace StartAndPark.Server.Controllers
             return NoContent();
         }
 
-        // POST: api/Races
+        // POST: api/Tracks
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<int>> PostRace(CreateTrackCommand race)
+        public async Task<ActionResult<int>> PostTrack(CreateTrackCommand track)
         {
-            var result = await _mediator.Send(race);
+            var result = await _mediator.Send(track);
 
             return ResponseHelpers.BuildCreatedAtResponse(
                 this,
                 result,
-                nameof(GetRace),
+                nameof(GetTrack),
                 () => new { id = result.Content });
         }
 
-        // DELETE: api/Races/5
+        // DELETE: api/Tracks/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRace(int id)
+        public async Task<IActionResult> DeleteTrack(int id)
         {
-            var race = await _context.Races.FindAsync(id);
-            if (race == null)
+            var track = await _context.Tracks.FindAsync(id);
+            if (track == null)
             {
                 return NotFound();
             }
 
-            _context.Races.Remove(race);
+            _context.Tracks.Remove(track);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool RaceExists(int id)
+        private bool TrackExists(int id)
         {
-            return _context.Races.Any(e => e.Id == id);
+            return _context.Tracks.Any(e => e.Id == id);
         }
     }
 }

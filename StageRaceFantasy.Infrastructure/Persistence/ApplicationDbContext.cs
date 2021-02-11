@@ -13,6 +13,7 @@ namespace StartAndPark.Infrastructure.Persistence
         public DbSet<DriverRaceEntry> DriverRaceEntries { get; set; }
         public DbSet<Owner> Owners { get; set; }
         public DbSet<RaceEntry> RaceEntries { get; set; }
+        public DbSet<Track> Tracks { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :
             base(options)

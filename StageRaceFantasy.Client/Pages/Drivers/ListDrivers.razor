@@ -1,0 +1,9 @@
+﻿@page "/drivers"
+
+@using StartAndPark.Client.Components
+
+<ManagementListPage TItem="Driver"
+                    Title="Drivers"
+                    IdField="@(x => x.Id)"
+                    NameField="@(x => x.DisplayNameLastFirst)"
+                    ManagePath="drivers" />

@@ -1,20 +1,17 @@
 ﻿@using BlazorTable
+@using StartAndPark.Client.Components.Forms
 @using System.Linq.Expressions
 
 @inject NavigationManager _navigationManager
 @inject HttpClient httpClient
 @inject IJSRuntime js
 
-@typeparam TListModel
 @typeparam TItem
 
 <p>
     <span class="h1">@Title</span>
 
-    <button class="btn btn-success btn-sm rounded-sm float-right" type="button" data-toggle="tooltip"
-            data-placement="top" title="Add New" @onclick="Add">
-        <i class="fa fa-plus">&nbsp;Add New</i>
-    </button>
+    <ActionButton Action="add" ButtonText="New" OnClick="Add" MinimizePadding="false" CssClass="float-right" />
 </p>
 
 @if (Items == null)
@@ -23,16 +20,16 @@
 }
 
 <div class="table-selectable">
-    <Table TableItem="TItem" Items="@Items" PageSize="@PageSize" ShowSearchBar="true" RowClickAction="Edit">
+    <Table TableItem="TItem" Items="@Items" PageSize="@PageSize" ShowSearchBar="false" RowClickAction="Edit">
         @*<Column TableItem="TItem" Title="Id" Field="@IdField" Width="5%" />*@
 
         <ActionButtonColumn TableItem="TItem" Action="edit" OnClick="@Edit" />
 
-        <Column TableItem="TItem" Title="@NameFieldTitle" Field="@NameField" />
+        <ActionButtonColumn TableItem="TItem" Action="delete" OnClick="@Delete" />
+
+        <Column TableItem="TItem" Title="@NameFieldTitle" Field="@NameField" Sortable="true" DefaultSortColumn="true" />
 
         @ChildContent
-
-        <ActionButtonColumn TableItem="TItem" Action="delete" OnClick="@Delete" />
 
         <Pager ShowPageNumber="true" ShowTotalCount="true" />
 
@@ -86,7 +83,7 @@
 
 
     // the full item list for this list view
-    public List<TItem> Items { get; set; }
+    protected TItem[] Items { get; set; }
 
 
     protected override async Task OnInitializedAsync()
@@ -96,8 +93,7 @@
 
     protected async Task LoadItems()
     {
-        var listModel = await httpClient.GetFromJsonAsync<TListModel>($"api/{ManagePath.Trim()}");
-        Items = listModel.ItemList;
+        Items = await httpClient.GetFromJsonAsync<TItem[]>($"api/{ManagePath.Trim()}");
     }
 
     // create a new item
@@ -134,7 +130,7 @@
     // put together the right navigation path for editing the given item ID
     private string GetEditorPath(int? id)
     {
-        return $"/{ManagePath.Trim()}/{(id.HasValue ? id : "create")}";
+        return $"/{ManagePath.Trim()}/{(id.HasValue ? id : 0)}";
     }
 
     private int GetItemId(TItem item)

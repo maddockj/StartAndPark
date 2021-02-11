@@ -118,6 +118,12 @@
                 _type = "submit";
                 break;
 
+            case "CANCEL":
+                _cssType = "secondary";
+                _title = "Cancel";
+                _iconName = "x";
+                break;
+
             default:
                 throw new NotImplementedException($"Unhandled Button Action {Action}");
         }

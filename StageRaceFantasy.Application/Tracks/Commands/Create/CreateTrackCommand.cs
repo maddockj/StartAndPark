@@ -4,12 +4,11 @@ using StartAndPark.Domain.Entities;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StartAndPark.Application.Races.Commands.Create
+namespace StartAndPark.Application.Tracks.Commands.Create
 {
     public record CreateTrackCommand : IApplicationCommand<int>
     {
         public string Name { get; init; }
-        public int TrackId { get; init; }
     }
 
     public class CreateTrackCommandHandler : ApplicationRequestHandler<CreateTrackCommand, int>
@@ -23,16 +22,15 @@ namespace StartAndPark.Application.Races.Commands.Create
 
         public override async Task<ApplicationRequestResult<int>> Handle(CreateTrackCommand request, CancellationToken cancellationToken)
         {
-            var race = new Race()
+            var track = new Track()
             {
                 Name = request.Name,
-                TrackId = request.TrackId
             };
 
-            _dbContext.Races.Add(race);
+            _dbContext.Tracks.Add(track);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return Success(race.Id);
+            return Success(track.Id);
         }
     }
 }

@@ -18,5 +18,6 @@ namespace StartAndPark.Application.Common.Interfaces
         DbSet<DriverRaceEntry> DriverRaceEntries { get; set; }
         DbSet<Owner> Owners { get; set; }
         DbSet<RaceEntry> RaceEntries { get; set; }
+        DbSet<Track> Tracks { get; set; }
     }
 }

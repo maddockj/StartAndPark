@@ -1,0 +1,28 @@
+﻿@page "/drivers/{DriverId:int}"
+
+@using StartAndPark.Client.Components
+@using StartAndPark.Client.Components.Forms
+
+@inject HttpClient http
+@inject NavigationManager navigationManager
+
+<ManagementPage TItem="Driver"
+                ManagePath="drivers"
+                Title="Driver"
+                IdField="@(x => x.Id)"
+                ItemId="@DriverId">
+
+    <InputGroup Label="First Name" Colspan="12">
+        <InputText @bind-Value="@context.FirstName" class="form-control form-control-sm" />
+    </InputGroup>
+
+    <InputGroup Label="Last Name" Colspan="12">
+        <InputText @bind-Value="@context.LastName" class="form-control form-control-sm" />
+    </InputGroup>
+
+</ManagementPage>
+
+@code {
+    [Parameter]
+    public int DriverId { get; set; }
+}

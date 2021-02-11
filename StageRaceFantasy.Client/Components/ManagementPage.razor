@@ -1,0 +1,216 @@
+﻿@using System.Linq.Expressions
+@using StartAndPark.Client.Components
+@using StartAndPark.Client.Components.Forms
+
+@inject HttpClient http
+@inject IMatToaster _toaster
+@inject NavigationManager _navigationManager
+
+@typeparam TItem
+
+<h1>@GetTitle()</h1>
+
+
+<div class="container-fluid">
+    <EditForm Model="@_item" OnValidSubmit="Save">
+
+        <DataAnnotationsValidator />
+
+        <!-- Edit Fields RenderFragment -->
+
+        <div class="card bg-light">
+            <div class="card-body px-0 py-3">
+                <div>@ChildContent(_item)</div>
+                <ValidationSummary />
+            </div>
+        </div>
+
+        <!-- Save and Delete Buttons -->
+
+        <div class="form-row pl-2 pt-1">
+            <div>
+                @*don't allow edits unless they've restored the deleted item*@
+                <ActionButton Action="save" MinimizePadding="false" ButtonText="@GetSubmitText()" />
+
+                <ActionButton Action="cancel" IsTextButton="true" MinimizePadding="false" CssClass="mr-1" OnClick="BackToList" />
+
+                @if (GetItemId() > 0)
+                {
+                    <ActionButton Action="delete" IsTextButton="true" MinimizePadding="false" OnClick="OpenDeleteDialog" />
+                }
+            </div>
+        </div>
+
+        <!-- Delete Dialog -->
+
+        <MatDialog @bind-IsOpen="@_deleteDialogIsOpen">
+            <MatDialogContent>
+                <div class="row">
+                    <div class="col">
+                        <p class="pt-1">@($"Are you sure you want to delete this?")</p>
+                    </div>
+                </div>
+            </MatDialogContent>
+            <MatDialogActions>
+                <button class="btn btn-sm btn-danger btn-sm p-1 m-1" type="button" @onclick="Delete">Delete</button>
+                <button class="btn btn-sm btn-primary btn-sm p-1 m-1" type="button" @onclick="CloseDeleteDialog">Cancel</button>
+            </MatDialogActions>
+        </MatDialog>
+
+    </EditForm>
+
+</div>
+
+@code {
+    /// <summary>
+    /// the display title for this page, which should also be the user-friendly kind of item being managed (e.g. Client, Currency, etc)
+    /// </summary>
+    [Parameter]
+    public string Title { get; set; }
+
+    /// <summary>
+    /// Override the page header using this function instead of the static Title property
+    /// </summary>
+    [Parameter]
+    public Func<TItem, string> DynamicTitle { get; set; }
+
+    /// <summary>
+    /// the expression for filtering a collection by id field
+    /// e.g. [for payee] (x => x.PayeeId == PayeeID) where PayeeID is a constant
+    /// </summary>
+    [Parameter]
+    public int ItemId { get; set; }
+
+    /// <summary>
+    /// the expression for getting the ID of the item being edited
+    /// </summary>
+    [Parameter]
+    public Expression<Func<TItem, int>> IdField { get; set; }
+
+    /// <summary>
+    /// the query to filter or include navigation properties when retrieving _item
+    /// </summary>
+    [Parameter]
+    public Func<IQueryable<TItem>, IQueryable<TItem>> Query { get; set; }
+
+    /// <summary>
+    /// UI (html) segment to render that contains bounds inputs for the desired fields
+    /// </summary>
+    [Parameter]
+    public RenderFragment<TItem> ChildContent { get; set; }
+
+    /// <summary>
+    /// the "type" part of the url to the editor page for these items.
+    /// Example: the "participant" in /manage/participant/{id}
+    /// </summary>
+    [Parameter]
+    public string ManagePath { get; set; }
+
+    /// <summary>
+    /// an optional function to perform before attempting to save the page
+    /// </summary>
+    [Parameter]
+    public Func<TItem, bool> OnBeforeSave { get; set; }
+
+    /// <summary>
+    /// the active edit context for the form on this page
+    /// </summary>
+    public EditContext EditContext => _editContext;
+
+    // the item to manage
+    private TItem _item = new TItem();
+
+    // EditContext allows on change event handlers with the EditForm
+    private EditContext _editContext;
+
+    // a flag for displaying the delete confirmation
+    private bool _deleteDialogIsOpen;
+
+    protected async override Task OnInitializedAsync()
+    {
+        // load from database, use a new TItem if that fails
+        if (ItemId > 0)
+        {
+            _item = await http.GetFromJsonAsync<TItem>($"api/{ManagePath}/{ItemId}");
+        }
+    }
+
+    private string GetTitle()
+    {
+        // use the dynamic title function to get the title from the item, or fallback to the static title property
+        var t = DynamicTitle?.Invoke(_item);
+        return  String.IsNullOrEmpty(t) ? Title : t;
+    }
+
+    // Button text for the form submit
+    private string GetSubmitText()
+    {
+        int id = GetItemId();
+        return id > 0 ? $"{Title}" : $"New {Title}";
+    }
+
+    // Save changes
+    private async Task Save()
+    {
+        // do pre-save work if requested
+        bool okToSave = OnBeforeSave?.Invoke(_item) ?? true;
+        // bail out if it didn't succeed
+        if (!okToSave) return;
+
+        var id = GetItemId();
+
+        HttpResponseMessage response;
+        if (id == 0)
+        {
+            response = await http.PostAsJsonAsync($"api/{ManagePath}", _item);
+        }
+        else
+        {
+            response = await http.PutAsJsonAsync($"api/{ManagePath}/{id}", _item);
+        }
+
+        if (!response.IsSuccessStatusCode)
+        {
+            _toaster.Add("Save Failed", MatToastType.Danger);
+            StateHasChanged();
+        }
+        else
+        {
+            BackToList();
+        }
+    }
+
+    // show the delete confirmation dialog
+    private void OpenDeleteDialog()
+    {
+        _deleteDialogIsOpen = true;
+    }
+
+    // delete the selected TItem
+    private async Task Delete()
+    {
+        CloseDeleteDialog();
+        await http.DeleteAsync($"api/{ManagePath}/{GetItemId()}");
+        _toaster.Add($"{Title} deleted successfully", MatToastType.Success);
+        // navigate back to list view
+        BackToList();
+    }
+
+    private void CloseDeleteDialog()
+    {
+        _deleteDialogIsOpen = false;
+    }
+
+    /* helper methods */
+    private void BackToList()
+    {
+        // send the user back to the list view
+        _navigationManager.NavigateTo(ManagePath);
+    }
+
+    private int GetItemId()
+    {
+        // get id field from item, if that fails return zero
+        return IdField?.Compile()?.Invoke(_item) ?? 0;
+    }
+}

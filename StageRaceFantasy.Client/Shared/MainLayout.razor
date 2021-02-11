@@ -1,4 +1,6 @@
-﻿@inherits LayoutComponentBase
+﻿@using MatBlazor 
+
+@inherits LayoutComponentBase
 
 @*<div>
     <NavMenu />
@@ -26,10 +28,13 @@
                 <LoginDisplay />
             </div>*@
 
-            <div class="content px-4">
+            <div class="content p-4 col-xl-8 col-lg-12">
                 @Body
             </div>
         </div>
 
     </CascadingValue>
 </div>
+
+
+<MatToastContainer />

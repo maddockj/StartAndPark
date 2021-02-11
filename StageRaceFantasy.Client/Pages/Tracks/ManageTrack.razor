@@ -1,0 +1,22 @@
+﻿@page "/tracks/{TrackId:int}"
+
+@using StartAndPark.Client.Components
+@using StartAndPark.Client.Components.Forms
+
+@inject HttpClient http
+@inject NavigationManager navigationManager
+
+<ManagementPage TItem="Track"
+                ManagePath="tracks"
+                Title="Track"
+                IdField="@(x => x.Id)"
+                ItemId="@TrackId">
+        <InputGroup Label="Track Name" Colspan="12">
+            <InputText @bind-Value="@context.Name" class="form-control form-control-sm" />
+        </InputGroup>
+</ManagementPage>
+
+@code {
+    [Parameter]
+    public int TrackId { get; set; }
+}

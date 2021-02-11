@@ -3,7 +3,7 @@ using StartAndPark.Application.ValidationRules;
 
 namespace StartAndPark.Application.Races.Commands.Create
 {
-    public class CreateRaceCommandValidator : AbstractValidator<CreateRaceCommand>
+    public class CreateRaceCommandValidator : AbstractValidator<CreateTrackCommand>
     {
         public CreateRaceCommandValidator()
         {

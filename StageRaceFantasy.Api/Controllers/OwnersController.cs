@@ -8,6 +8,7 @@ using StartAndPark.Domain.Entities;
 using StartAndPark.Server.Controllers.Utils;
 using StartAndPark.Application.Owners.Commands.Delete;
 using StartAndPark.Application.Owners.Commands.Update;
+using System.Collections.Generic;
 
 namespace StartAndPark.Server.Controllers
 {
@@ -22,13 +23,22 @@ namespace StartAndPark.Server.Controllers
             _mediator = mediator;
         }
 
+        //[HttpGet]
+        //public async Task<ActionResult<GetAllOwnersVm>> GetOwners()
+        //{
+        //    var query = new GetAllOwnersQuery();
+        //    var result = await _mediator.Send(query);
+
+        //    return ResponseHelpers.BuildRawContentResponse(this, result);
+        //}
+
         [HttpGet]
-        public async Task<ActionResult<GetAllOwnersVm>> GetOwners()
+        public async Task<ActionResult<IEnumerable<OwnerDto>>> GetOwners()
         {
             var query = new GetAllOwnersQuery();
             var result = await _mediator.Send(query);
 
-            return ResponseHelpers.BuildRawContentResponse(this, result);
+            return result.Content.ItemList;
         }
 
         [HttpGet("{id}")]

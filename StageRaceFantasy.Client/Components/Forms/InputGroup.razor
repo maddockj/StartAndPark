@@ -1,0 +1,67 @@
+﻿<div class="input-group input-group-sm @ContainerClass" style="@ContainerStyle">
+    <div class="input-group-prepend @_prependClass">
+        <span class="input-group-text @_labelClass" style="@PrependStyle">@Label</span>
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    /// <summary>
+    /// label text show at the left end of this input group
+    /// </summary>
+    [Parameter]
+    public string Label { get; set; }
+
+    /// <summary>
+    /// make the label bold?
+    /// </summary>
+    [Parameter]
+    public bool BoldLabel { get; set; }
+
+    /// <summary>
+    /// optional bootstrap column span. Valid values are 1 through 12, inclusive.
+    /// </summary>
+    [Parameter]
+    public int? Colspan { get; set; }
+
+    /// <summary>
+    /// optional class string to add on to the input-group div
+    /// </summary>
+    [Parameter]
+    public string ContainerClass { get; set; }
+
+    /// <summary>
+    /// optional css style to apply to the input-group div
+    /// </summary>
+    [Parameter]
+    public string ContainerStyle { get; set; }
+
+    /// <summary>
+    /// optional class string to add on to the input-group-prepend div
+    /// </summary>
+    [Parameter]
+    public string PrependClass { get; set; }
+
+    /// <summary>
+    /// optional css style to apply to the input-group-prepend div
+    /// </summary>
+    [Parameter]
+    public string PrependStyle { get; set; }
+
+    /// <summary>
+    /// optional class string to add on to the input-group-text label
+    /// </summary>
+    [Parameter]
+    public string LabelClass { get; set; }
+
+    /// <summary>
+    /// Any other elements you wanna stick in this thing inside the input-group-prepend div
+    /// </summary>
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+
+    private string _prependClass => Colspan.HasValue ? $"col-lg-{Colspan} {PrependClass}" : PrependClass;
+
+    private string _labelClass => BoldLabel ? $"font-weight-bold {LabelClass}" : LabelClass;
+}
