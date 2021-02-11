@@ -1,4 +1,4 @@
-﻿@page "/owners/{teamId:int}"
+﻿@page "/owners/{ownerId:int}"
 
 @using StartAndPark.Application.Owners.Queries.GetById
 @using StartAndPark.Application.RaceEntries.Commands.Create
@@ -50,7 +50,7 @@ else
             <td>@context.RaceId</td>
             <td>@context.RaceName</td>
             <td>
-                <MatButton Link="@($"/owners/{teamId}/race-entries/{context.RaceId}")">View</MatButton>
+                <MatButton Link="@($"/owners/{ownerId}/race-entries/{context.RaceId}")">View</MatButton>
             </td>
         </MatTableRow>
         </MatTable>
@@ -58,14 +58,14 @@ else
 }
 
 @code {
-    [Parameter] public int teamId { get; set; }
+    [Parameter] public int ownerId { get; set; }
     private GetOwnerByIdVm vm { get; set; }
     private Race[] unenteredRaces { get; set; }
     private int selectedRaceId;
 
     protected override async Task OnInitializedAsync()
     {
-        vm = await httpClient.GetJsonAsync<GetOwnerByIdVm>($"api/owners/{teamId}");
+        vm = await httpClient.GetJsonAsync<GetOwnerByIdVm>($"api/owners/{ownerId}");
         var allRaces = await httpClient.GetJsonAsync<Race[]>("api/races");
 
         selectedRaceId = 0;
@@ -74,9 +74,9 @@ else
 
     private async Task EnterRace()
     {
-        var raceEntry = new CreateRaceEntryCommand(teamId, selectedRaceId);
+        var raceEntry = new CreateRaceEntryCommand(ownerId, selectedRaceId);
 
-        await httpClient.PostAsJsonAsync($"api/owners/{teamId}/race-entries", raceEntry);
+        await httpClient.PostAsJsonAsync($"api/owners/{ownerId}/race-entries", raceEntry);
 
         await OnInitializedAsync();
     }

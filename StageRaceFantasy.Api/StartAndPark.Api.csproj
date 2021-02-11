@@ -15,8 +15,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StageRaceFantasy.Client\StartAndPark.Client.csproj" />
-    <ProjectReference Include="..\StageRaceFantasy.Infrastructure\StageRaceFantasy.Infrastructure.csproj" />
-    <ProjectReference Include="..\StageRaceFantasy.Domain\StageRaceFantasy.Domain.csproj" />
+    <ProjectReference Include="..\StageRaceFantasy.Infrastructure\StartAndPark.Infrastructure.csproj" />
+    <ProjectReference Include="..\StageRaceFantasy.Domain\StartAndPark.Domain.csproj" />
   </ItemGroup>
 
 

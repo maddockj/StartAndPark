@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StageRaceFantasy.Application\StageRaceFantasy.Application.csproj" />
+    <ProjectReference Include="..\StageRaceFantasy.Application\StartAndPark.Application.csproj" />
   </ItemGroup>
 
 </Project>

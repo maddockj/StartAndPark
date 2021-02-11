@@ -3,19 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30516.212
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StageRaceFantasy.Infrastructure", "StageRaceFantasy.Infrastructure\StageRaceFantasy.Infrastructure.csproj", "{4C7AC3CD-CDBC-4B8E-BDD9-385C38919D77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StartAndPark.Infrastructure", "StageRaceFantasy.Infrastructure\StartAndPark.Infrastructure.csproj", "{4C7AC3CD-CDBC-4B8E-BDD9-385C38919D77}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StageRaceFantasy.Application", "StageRaceFantasy.Application\StageRaceFantasy.Application.csproj", "{3B80E030-945E-4CEE-A4C5-9A6C4B57CF01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StartAndPark.Application", "StageRaceFantasy.Application\StartAndPark.Application.csproj", "{3B80E030-945E-4CEE-A4C5-9A6C4B57CF01}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StageRaceFantasy.Api", "StageRaceFantasy.Api\StageRaceFantasy.Api.csproj", "{652ECAB1-2BB9-4635-9D0E-F1E9409861CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StartAndPark.Api", "StageRaceFantasy.Api\StartAndPark.Api.csproj", "{652ECAB1-2BB9-4635-9D0E-F1E9409861CA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StartAndPark.Client", "StageRaceFantasy.Client\StartAndPark.Client.csproj", "{F405011F-848C-4D35-A81E-BFFB6D3B5294}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StageRaceFantasy.Domain", "StageRaceFantasy.Domain\StageRaceFantasy.Domain.csproj", "{D40F8504-3AEE-48E4-B897-70B92311E094}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StartAndPark.Domain", "StageRaceFantasy.Domain\StartAndPark.Domain.csproj", "{D40F8504-3AEE-48E4-B897-70B92311E094}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1D4CC55E-BF40-4E7F-B267-2CC511846BAC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StageRaceFantasy.Application.IntegrationTests", "StageRaceFantasy.Application.Test\StageRaceFantasy.Application.IntegrationTests.csproj", "{816E9F71-D999-40AE-9E52-E711621CD0C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StartAndPark.Application.IntegrationTests", "StageRaceFantasy.Application.Test\StartAndPark.Application.IntegrationTests.csproj", "{816E9F71-D999-40AE-9E52-E711621CD0C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

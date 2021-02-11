@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StageRaceFantasy.Api\StageRaceFantasy.Api.csproj" />
+    <ProjectReference Include="..\StageRaceFantasy.Api\StartAndPark.Api.csproj" />
   </ItemGroup>
 
 </Project>
