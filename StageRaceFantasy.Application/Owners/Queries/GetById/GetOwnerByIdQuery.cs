@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using StageRaceFantasy.Application.Common.Interfaces;
-using StageRaceFantasy.Application.Common.Requests;
+using StartAndPark.Application.Common.Interfaces;
+using StartAndPark.Application.Common.Requests;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Application.FantasyTeams.Queries.GetById
+namespace StartAndPark.Application.Owners.Queries.GetById
 {
     public record GetOwnerByIdQuery(int OwnerId) : IApplicationQuery<GetOwnerByIdVm>
     {

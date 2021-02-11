@@ -1,4 +1,4 @@
-﻿namespace StageRaceFantasy.Application.IntegrationTests
+﻿namespace StartAndPark.Application.IntegrationTests
 {
     public static class ValidationMessageFragments
     {

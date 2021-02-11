@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using StageRaceFantasy.Application.ValidationRules;
+using StartAndPark.Application.ValidationRules;
 
-namespace StageRaceFantasy.Application.FantasyTeams.Commands.Create
+namespace StartAndPark.Application.Owners.Commands.Create
 {
     public class CreateOwnerCommandValidator : AbstractValidator<CreateOwnerCommand>
     {

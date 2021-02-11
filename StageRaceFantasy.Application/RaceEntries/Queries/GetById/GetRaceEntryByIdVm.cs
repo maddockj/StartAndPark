@@ -1,15 +1,15 @@
-﻿using StageRaceFantasy.Application.Common.AutoMapper;
-using StageRaceFantasy.Domain.Entities;
+﻿using StartAndPark.Application.Common.AutoMapper;
+using StartAndPark.Domain.Entities;
 using System.Collections.Generic;
 
-namespace StageRaceFantasy.Application.FantasyTeamRaceEntries.Queries.GetById
+namespace StartAndPark.Application.RaceEntries.Queries.GetById
 {
     public class GetRaceEntryByIdVm : IMapFrom<RaceEntry>
     {
         public int OwnerId { get; set; }
         public int RaceId { get; set; }
         public string RaceName { get; set; }
-        public int FantasyTeamSize { get; set; }
+        public int TeamSize { get; set; }
         public List<DriverDto> Drivers { get; set; }
     }
 

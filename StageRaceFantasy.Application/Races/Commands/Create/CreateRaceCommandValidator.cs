@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using StageRaceFantasy.Application.ValidationRules;
+using StartAndPark.Application.ValidationRules;
 
-namespace StageRaceFantasy.Application.Races.Commands.Create
+namespace StartAndPark.Application.Races.Commands.Create
 {
     public class CreateRaceCommandValidator : AbstractValidator<CreateRaceCommand>
     {

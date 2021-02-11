@@ -1,4 +1,4 @@
-﻿@page "/fantasy-teams/create"
+﻿@page "/owners/create"
 
 @inject HttpClient http
 @inject NavigationManager navigationManager
@@ -14,7 +14,7 @@
 
     async Task Submit()
     {
-        await http.PostAsJsonAsync("api/fantasy-teams", owner);
-        navigationManager.NavigateTo("fantasy-teams");
+        await http.PostAsJsonAsync("api/owners", owner);
+        navigationManager.NavigateTo("owners");
     }
 }

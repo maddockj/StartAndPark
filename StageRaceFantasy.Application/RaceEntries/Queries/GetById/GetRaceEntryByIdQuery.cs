@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using StageRaceFantasy.Application.Common.Interfaces;
-using StageRaceFantasy.Application.Common.Requests;
+using StartAndPark.Application.Common.Interfaces;
+using StartAndPark.Application.Common.Requests;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Application.FantasyTeamRaceEntries.Queries.GetById
+namespace StartAndPark.Application.RaceEntries.Queries.GetById
 {
     public record GetRaceEntryByIdQuery(int OwnerId, int RaceId)
         : IApplicationQuery<GetRaceEntryByIdVm>
@@ -42,7 +42,7 @@ namespace StageRaceFantasy.Application.FantasyTeamRaceEntries.Queries.GetById
             var result = _mapper.Map<GetRaceEntryByIdVm>(entry);
 
             var race = await _dbContext.Races.FindAsync(new object[]{ raceId }, cancellationToken);
-            result.FantasyTeamSize = race.FantasyTeamSize;
+            result.TeamSize = race.TeamSize;
 
             return new(result);
         }

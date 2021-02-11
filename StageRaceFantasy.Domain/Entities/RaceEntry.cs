@@ -2,13 +2,13 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
-namespace StageRaceFantasy.Domain.Entities
+namespace StartAndPark.Domain.Entities
 {
     public class RaceEntry
     {
         public int Id { get; set; }
         public int OwnerId { get; set; }
-        public Owner FantasyTeam { get; set; }
+        public Owner Owner { get; set; }
         public int RaceId { get; set; }
         public Race Race { get; set; }
         public List<RaceEntryDriver> RaceEntryDrivers { get; set; }

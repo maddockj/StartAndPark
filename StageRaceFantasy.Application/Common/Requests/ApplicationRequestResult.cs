@@ -1,7 +1,7 @@
 ﻿using FluentValidation.Results;
 using System.Collections.Generic;
 
-namespace StageRaceFantasy.Application.Common.Requests
+namespace StartAndPark.Application.Common.Requests
 {
     public record ApplicationRequestResult<T>
     {

@@ -1,7 +1,7 @@
-﻿@page "/fantasy-teams/{teamId:int}/race-entries/{raceId:int}"
+﻿@page "/owners/{teamId:int}/race-entries/{raceId:int}"
 
-@using StageRaceFantasy.Application.FantasyTeamRaceEntries.Queries.GetById
-@using StageRaceFantasy.Application.RiderRaceEntries.Queries.GetAll
+@using StartAndPark.Application.RaceEntries.Queries.GetById
+@using StartAndPark.Application.DriverRaceEntries.Queries.GetAll
 
 @inject HttpClient httpClient
 
@@ -42,7 +42,7 @@ else
                 <td>@context.Driver.FirstName</td>
                 <td>@context.Driver.LastName</td>
                 <td>
-                    <MatIconButton @onclick="@(() => RemoveRider(context.Driver.Id))" Icon="delete" Style="color: red" />
+                    <MatIconButton @onclick="@(() => RemoveDriver(context.Driver.Id))" Icon="delete" Style="color: red" />
                 </td>
                 }
         </MatTableRow>
@@ -57,12 +57,12 @@ else
         @*TODO: Figure out how to get MatSelect working.  Throws error when button clicked at the moment.  Possibly to do with this: https://github.com/SamProf/MatBlazor/issues/651.*@
         <select Label="Select a Driver" @bind="@selectedDriverId">
             <option disabled="true" value="0">-- Please Select --</option>
-            @foreach (var rider in availableDrivers)
+            @foreach (var driver in availableDrivers)
             {
-                <option value="@rider.DriverId">@rider.DriverLastName, @rider.DriverFirstName</option>
+                <option value="@driver.DriverId">@driver.DriverLastName, @driver.DriverFirstName</option>
             }
         </select>
-        <MatButton OnClick="@AddRider" Disabled="@(selectedDriverId == 0)">Add Rider</MatButton>
+        <MatButton OnClick="@AddDriver" Disabled="@(selectedDriverId == 0)">Add Driver</MatButton>
     }
 }
 
@@ -89,7 +89,7 @@ else
     {
         selectedDriverId = 0;
         driverSelections = null;
-        vm = await httpClient.GetJsonAsync<GetRaceEntryByIdVm>($"api/fantasy-teams/{ownerId}/race-entries/{raceId}");
+        vm = await httpClient.GetJsonAsync<GetRaceEntryByIdVm>($"api/owners/{ownerId}/race-entries/{raceId}");
         var allEnteredDrivers = await httpClient.GetJsonAsync<GetAllDriverRaceEntriesVm>($"api/races/{raceId}/entries");
 
         availableDrivers = allEnteredDrivers.Entries.Where(x => !vm.Drivers.Any(r => r.Id == x.DriverId)).ToArray();
@@ -98,21 +98,21 @@ else
             .Select((x, i) => new DriverSelectionRow(i + 1, x))
             .ToList();
 
-        for (int i = driverSelections.Count(); i < vm.FantasyTeamSize; i++)
+        for (int i = driverSelections.Count(); i < vm.TeamSize; i++)
         {
             driverSelections.Add(new(i + 1));
         }
     }
 
-    private async Task AddRider()
+    private async Task AddDriver()
     {
-        await httpClient.PostAsync($"api/fantasy-teams/{ownerId}/race-entries/{raceId}/riders/{selectedDriverId}", new StringContent(""));
+        await httpClient.PostAsync($"api/owners/{ownerId}/race-entries/{raceId}/drivers/{selectedDriverId}", new StringContent(""));
         await OnInitializedAsync();
     }
 
-    private async Task RemoveRider(int driverId)
+    private async Task RemoveDriver(int driverId)
     {
-        await httpClient.DeleteAsync($"api/fantasy-teams/{ownerId}/race-entries/{raceId}/riders/{driverId}");
+        await httpClient.DeleteAsync($"api/owners/{ownerId}/race-entries/{raceId}/drivers/{driverId}");
         await OnInitializedAsync();
     }
 }

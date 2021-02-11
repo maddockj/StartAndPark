@@ -1,6 +1,6 @@
 {
     "profiles": {
-      "StageRaceFantasy.Server": {
+      "StartAndPark.Server": {
         "commandName": "Project",
         "dotnetRunMessages": "true",
         "launchBrowser": true,

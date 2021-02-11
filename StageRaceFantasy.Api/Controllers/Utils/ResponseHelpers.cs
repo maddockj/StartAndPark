@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StageRaceFantasy.Application.Common.Requests;
+using StartAndPark.Application.Common.Requests;
 using System;
 using System.Linq;
 
-namespace StageRaceFantasy.Server.Controllers.Utils
+namespace StartAndPark.Server.Controllers.Utils
 {
     public static class ResponseHelpers
     {

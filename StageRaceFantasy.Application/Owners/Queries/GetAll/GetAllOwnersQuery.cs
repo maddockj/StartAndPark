@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using StageRaceFantasy.Application.Common.Interfaces;
-using StageRaceFantasy.Application.Common.Requests;
+using StartAndPark.Application.Common.Interfaces;
+using StartAndPark.Application.Common.Requests;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Application.FantasyTeams.Queries.GetAll
+namespace StartAndPark.Application.Owners.Queries.GetAll
 {
     public class GetAllOwnersQuery : IApplicationQuery<GetAllOwnersVm>
     {

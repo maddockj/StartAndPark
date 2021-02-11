@@ -1,7 +1,7 @@
-﻿using StageRaceFantasy.Application.Common.AutoMapper;
+﻿using StartAndPark.Application.Common.AutoMapper;
 using System.Collections.Generic;
 
-namespace StageRaceFantasy.Domain.Entities
+namespace StartAndPark.Domain.Entities
 {
     public class GetAllRaceEntriesVm
     {

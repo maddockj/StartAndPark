@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Application.Common.AutoMapper
+namespace StartAndPark.Application.Common.AutoMapper
 {
     public static class MappingExtensions
     {

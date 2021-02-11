@@ -3,10 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using StageRaceFantasy.Application.Common.Interfaces;
-using StageRaceFantasy.Domain.Entities;
+using StartAndPark.Application.Common.Interfaces;
+using StartAndPark.Domain.Entities;
 
-namespace StageRaceFantasy.Server.Controllers
+namespace StartAndPark.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -19,7 +19,6 @@ namespace StageRaceFantasy.Server.Controllers
             _context = context;
         }
 
-        // GET: api/Riders
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Driver>>> GetDrivers()
         {
@@ -28,7 +27,6 @@ namespace StageRaceFantasy.Server.Controllers
                 .ToListAsync();
         }
 
-        // GET: api/Riders/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Driver>> GetDriver(int id)
         {
@@ -42,7 +40,6 @@ namespace StageRaceFantasy.Server.Controllers
             return driver;
         }
 
-        // PUT: api/Riders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDriver(int id, Driver driver)
@@ -73,7 +70,6 @@ namespace StageRaceFantasy.Server.Controllers
             return NoContent();
         }
 
-        // POST: api/Riders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Driver>> PostDriver(Driver driver)
@@ -84,7 +80,6 @@ namespace StageRaceFantasy.Server.Controllers
             return CreatedAtAction("GetDriver", new { id = driver.Id }, driver);
         }
 
-        // DELETE: api/Riders/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDriver(int id)
         {

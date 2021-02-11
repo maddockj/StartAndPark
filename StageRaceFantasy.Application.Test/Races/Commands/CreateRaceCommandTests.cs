@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using StageRaceFantasy.Application.Races.Commands.Create;
-using StageRaceFantasy.Application.IntegrationTests.Assertions;
-using StageRaceFantasy.Domain.Entities;
+using StartAndPark.Application.Races.Commands.Create;
+using StartAndPark.Application.IntegrationTests.Assertions;
+using StartAndPark.Domain.Entities;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Application.IntegrationTests.Races.Commands
+namespace StartAndPark.Application.IntegrationTests.Races.Commands
 {
     using static Testing;
 

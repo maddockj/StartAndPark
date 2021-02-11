@@ -1,21 +1,21 @@
 ﻿using MediatR;
-using StageRaceFantasy.Application.Common.Interfaces;
-using StageRaceFantasy.Application.Common.Requests;
+using StartAndPark.Application.Common.Interfaces;
+using StartAndPark.Application.Common.Requests;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Application.RiderRaceEntries.Commands.Update
+namespace StartAndPark.Application.DriverRaceEntries.Commands.Update
 {
     public record UpdateDriverRaceEntryCommand(int RaceId, int DriverId, string CarNumber)
         : IRequest<ApplicationRequestResult>
     {
     }
 
-    public class UpdateRiderRaceEntryHandler : ApplicationRequestHandler<UpdateDriverRaceEntryCommand>
+    public class UpdateDriverRaceEntryHandler : ApplicationRequestHandler<UpdateDriverRaceEntryCommand>
     {
         private readonly IApplicationDbContext _dbContext;
 
-        public UpdateRiderRaceEntryHandler(IApplicationDbContext dbContext)
+        public UpdateDriverRaceEntryHandler(IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -23,14 +23,14 @@ namespace StageRaceFantasy.Application.RiderRaceEntries.Commands.Update
         public override async Task<ApplicationRequestResult> Handle(UpdateDriverRaceEntryCommand request, CancellationToken cancellationToken)
         {
             var raceId = request.RaceId;
-            var riderId = request.DriverId;
+            var driverId = request.DriverId;
 
-            var riderRaceEntry = await _dbContext.DriverRaceEntries
-                .FindAsync(new object[] { raceId, riderId }, cancellationToken: cancellationToken);
+            var driverRaceEntry = await _dbContext.DriverRaceEntries
+                .FindAsync(new object[] { raceId, driverId }, cancellationToken: cancellationToken);
 
-            if (riderRaceEntry == null) return NotFound();
+            if (driverRaceEntry == null) return NotFound();
 
-            riderRaceEntry.CarNumber = request.CarNumber;
+            driverRaceEntry.CarNumber = request.CarNumber;
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 

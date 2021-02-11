@@ -2,10 +2,10 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using StageRaceFantasy.Application.Common.Behaviours;
+using StartAndPark.Application.Common.Behaviours;
 using System.Reflection;
 
-namespace StageRaceFantasy.Application
+namespace StartAndPark.Application
 {
     public static class DependencyInjection
     {

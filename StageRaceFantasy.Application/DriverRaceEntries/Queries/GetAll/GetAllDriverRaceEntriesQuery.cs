@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using StageRaceFantasy.Application.Common.Interfaces;
-using StageRaceFantasy.Application.Common.Requests;
+using StartAndPark.Application.Common.Interfaces;
+using StartAndPark.Application.Common.Requests;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Application.RiderRaceEntries.Queries.GetAll
+namespace StartAndPark.Application.DriverRaceEntries.Queries.GetAll
 {
     public record GetAllDriverRaceEntriesQuery(int RaceId) : IApplicationQuery<GetAllDriverRaceEntriesVm>
     {

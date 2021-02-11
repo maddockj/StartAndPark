@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace StageRaceFantasy.Application.Common.AutoMapper
+namespace StartAndPark.Application.Common.AutoMapper
 {
     public class MappingProfile : Profile
     {

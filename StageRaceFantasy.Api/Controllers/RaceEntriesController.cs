@@ -1,18 +1,18 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using StageRaceFantasy.Application.Commands.FanasyTeamRaceEntries;
-using StageRaceFantasy.Application.FantasyTeamRaceEntries.Commands.Create;
-using StageRaceFantasy.Application.FantasyTeamRaceEntries.Commands.Delete;
-using StageRaceFantasy.Application.FantasyTeamRaceEntries.Commands.RemoveRider;
-using StageRaceFantasy.Application.FantasyTeamRaceEntries.Queries.GetAll;
-using StageRaceFantasy.Application.FantasyTeamRaceEntries.Queries.GetById;
-using StageRaceFantasy.Domain.Entities;
-using StageRaceFantasy.Server.Controllers.Utils;
+using StartAndPark.Application.Commands.FanasyTeamRaceEntries;
+using StartAndPark.Application.RaceEntries.Commands.Create;
+using StartAndPark.Application.RaceEntries.Commands.Delete;
+using StartAndPark.Application.RaceEntries.Commands.RemoveDriver;
+using StartAndPark.Application.RaceEntries.Queries.GetAll;
+using StartAndPark.Application.RaceEntries.Queries.GetById;
+using StartAndPark.Domain.Entities;
+using StartAndPark.Server.Controllers.Utils;
 
-namespace StageRaceFantasy.Server.Controllers
+namespace StartAndPark.Server.Controllers
 {
-    [Route("api/fantasy-teams/{fantasyTeamId}/race-entries")]
+    [Route("api/owners/{ownerId}/race-entries")]
     [ApiController]
     public class RaceEntriesController : ControllerBase
     {
@@ -42,7 +42,7 @@ namespace StageRaceFantasy.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostFantasyTeamRaceEntry(int ownerId, CreateRaceEntryCommand command)
+        public async Task<ActionResult> PostRaceEntry(int ownerId, CreateRaceEntryCommand command)
         {
             if (command.OwnerId != ownerId) return BadRequest();
 
@@ -52,7 +52,7 @@ namespace StageRaceFantasy.Server.Controllers
         }
 
         [HttpDelete("{raceId}")]
-        public async Task<IActionResult> DeleteFantasyTeamRaceEntry(int ownerId, int raceId)
+        public async Task<IActionResult> DeleteRaceEntry(int ownerId, int raceId)
         {
             var command = new DeleteRaceEntryCommand(ownerId, raceId);
             var result = await _mediator.Send(command);
@@ -60,7 +60,7 @@ namespace StageRaceFantasy.Server.Controllers
             return ResponseHelpers.BuildNoContentResponse(this, result);
         }
 
-        [HttpPost("{raceId}/riders/{driverId}")]
+        [HttpPost("{raceId}/drivers/{driverId}")]
         public async Task<IActionResult> AddDriver(int ownerId, int raceId, int driverId)
         {
             var command = new AddDriverToRaceEntryCommand(ownerId, raceId, driverId);
@@ -69,7 +69,7 @@ namespace StageRaceFantasy.Server.Controllers
             return ResponseHelpers.BuildNoContentResponse(this, result);
         }
 
-        [HttpDelete("{raceId}/riders/{driverId}")]
+        [HttpDelete("{raceId}/drivers/{driverId}")]
         public async Task<IActionResult> RemoveDriver(int ownerId, int raceId, int driverId)
         {
             var command = new RemoveDriverFromRaceEntryCommand(ownerId, raceId, driverId);

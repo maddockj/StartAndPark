@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace StageRaceFantasy.Application.ValidationRules
+namespace StartAndPark.Application.ValidationRules
 {
     public static class RaceRules
     {

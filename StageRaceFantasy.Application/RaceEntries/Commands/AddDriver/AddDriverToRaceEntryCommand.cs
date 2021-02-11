@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StageRaceFantasy.Application.Common.Interfaces;
-using StageRaceFantasy.Application.Common.Requests;
-using StageRaceFantasy.Domain.Entities;
+using StartAndPark.Application.Common.Interfaces;
+using StartAndPark.Application.Common.Requests;
+using StartAndPark.Domain.Entities;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Application.Commands.FanasyTeamRaceEntries
+namespace StartAndPark.Application.Commands.FanasyTeamRaceEntries
 {
     public record AddDriverToRaceEntryCommand(int OwnerId, int RaceId, int DriverId)
         : IApplicationCommand

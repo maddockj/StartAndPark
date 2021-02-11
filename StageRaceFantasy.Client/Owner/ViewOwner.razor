@@ -1,7 +1,7 @@
-﻿@page "/fantasy-teams/{teamId:int}"
+﻿@page "/owners/{teamId:int}"
 
-@using StageRaceFantasy.Application.FantasyTeams.Queries.GetById
-@using StageRaceFantasy.Application.FantasyTeamRaceEntries.Commands.Create
+@using StartAndPark.Application.Owners.Queries.GetById
+@using StartAndPark.Application.RaceEntries.Commands.Create
 
 @inject HttpClient httpClient
 
@@ -50,7 +50,7 @@ else
             <td>@context.RaceId</td>
             <td>@context.RaceName</td>
             <td>
-                <MatButton Link="@($"/fantasy-teams/{teamId}/race-entries/{context.RaceId}")">View</MatButton>
+                <MatButton Link="@($"/owners/{teamId}/race-entries/{context.RaceId}")">View</MatButton>
             </td>
         </MatTableRow>
         </MatTable>
@@ -65,7 +65,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        vm = await httpClient.GetJsonAsync<GetOwnerByIdVm>($"api/fantasy-teams/{teamId}");
+        vm = await httpClient.GetJsonAsync<GetOwnerByIdVm>($"api/owners/{teamId}");
         var allRaces = await httpClient.GetJsonAsync<Race[]>("api/races");
 
         selectedRaceId = 0;
@@ -76,7 +76,7 @@ else
     {
         var raceEntry = new CreateRaceEntryCommand(teamId, selectedRaceId);
 
-        await httpClient.PostAsJsonAsync($"api/fantasy-teams/{teamId}/race-entries", raceEntry);
+        await httpClient.PostAsJsonAsync($"api/owners/{teamId}/race-entries", raceEntry);
 
         await OnInitializedAsync();
     }

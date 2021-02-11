@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
 
-namespace StageRaceFantasy.Application.ValidationRules
+namespace StartAndPark.Application.ValidationRules
 {
-    public static class FantasyTeamRules
+    public static class OwnerRules
     {
         private const int NameMaxLength = 200;
 

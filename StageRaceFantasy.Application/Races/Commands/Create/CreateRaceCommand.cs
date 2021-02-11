@@ -1,10 +1,10 @@
-﻿using StageRaceFantasy.Application.Common.Interfaces;
-using StageRaceFantasy.Application.Common.Requests;
-using StageRaceFantasy.Domain.Entities;
+﻿using StartAndPark.Application.Common.Interfaces;
+using StartAndPark.Application.Common.Requests;
+using StartAndPark.Domain.Entities;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Application.Races.Commands.Create
+namespace StartAndPark.Application.Races.Commands.Create
 {
     public record CreateRaceCommand : IApplicationCommand<int>
     {

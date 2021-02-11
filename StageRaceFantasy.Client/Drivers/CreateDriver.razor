@@ -1,4 +1,4 @@
-﻿@page "/riders/create"
+﻿@page "/drivers/create"
 
 @inject HttpClient http
 @inject NavigationManager navigationManager
@@ -15,7 +15,7 @@
 
     async Task Submit()
     {
-        await http.PostAsJsonAsync("api/riders", driver);
-        navigationManager.NavigateTo("riders");
+        await http.PostAsJsonAsync("api/drivers", driver);
+        navigationManager.NavigateTo("drivers");
     }
 }

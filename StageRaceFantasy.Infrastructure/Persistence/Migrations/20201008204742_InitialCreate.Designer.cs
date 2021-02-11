@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using StageRaceFantasy.Infrastructure.Persistence;
+using StartAndPark.Infrastructure.Persistence;
 
-namespace StageRaceFantasy.Infrastructure.Persistence.Migrations
+namespace StartAndPark.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20201008204742_InitialCreate")]

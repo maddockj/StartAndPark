@@ -1,4 +1,4 @@
-﻿namespace StageRaceFantasy.Application.Common.Requests
+﻿namespace StartAndPark.Application.Common.Requests
 {
     public interface IApplicationRequest
     {

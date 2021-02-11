@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using StageRaceFantasy.Application.Common.Interfaces;
-using StageRaceFantasy.Domain.Entities;
+using StartAndPark.Application.Common.Interfaces;
+using StartAndPark.Domain.Entities;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Infrastructure.Persistence
+namespace StartAndPark.Infrastructure.Persistence
 {
     public class ApplicationDbContext : DbContext, IApplicationDbContext
     {

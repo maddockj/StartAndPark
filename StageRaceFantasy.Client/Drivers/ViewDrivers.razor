@@ -1,11 +1,11 @@
-﻿@page "/riders"
+﻿@page "/drivers"
 
 @inject HttpClient httpClient
 @inject IJSRuntime js
 
 <MatHeadline2>Drivers</MatHeadline2>
 <div>
-    <MatButton Link="riders/create">Create New</MatButton>
+    <MatButton Link="drivers/create">Create New</MatButton>
 </div>
 
 @if (drivers == null)
@@ -45,7 +45,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        drivers = await httpClient.GetFromJsonAsync<Driver[]>("api/riders");
+        drivers = await httpClient.GetFromJsonAsync<Driver[]>("api/drivers");
     }
 
     async Task DeleteDriver(int driverId)
@@ -54,7 +54,7 @@ else
 
         if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete driver {driver.FirstName} {driver.LastName}?"))
         {
-            await httpClient.DeleteAsync($"api/riders/{driver.Id}");
+            await httpClient.DeleteAsync($"api/drivers/{driver.Id}");
             await OnInitializedAsync();
         }
     }

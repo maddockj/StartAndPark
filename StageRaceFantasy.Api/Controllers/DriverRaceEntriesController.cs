@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using StageRaceFantasy.Application.RiderRaceEntries.Commands.Create;
-using StageRaceFantasy.Application.RiderRaceEntries.Commands.Delete;
-using StageRaceFantasy.Application.RiderRaceEntries.Commands.Update;
-using StageRaceFantasy.Application.RiderRaceEntries.Queries.GetAll;
-using StageRaceFantasy.Server.Controllers.Utils;
+using StartAndPark.Application.DriverRaceEntries.Commands.Create;
+using StartAndPark.Application.DriverRaceEntries.Commands.Delete;
+using StartAndPark.Application.DriverRaceEntries.Commands.Update;
+using StartAndPark.Application.DriverRaceEntries.Queries.GetAll;
+using StartAndPark.Server.Controllers.Utils;
 
-namespace StageRaceFantasy.Server.Controllers
+namespace StartAndPark.Server.Controllers
 {
     [Route("api/races/{raceId}/entries")]
     [ApiController]
@@ -30,7 +30,7 @@ namespace StageRaceFantasy.Server.Controllers
         }
 
         [HttpPut("{driverId}")]
-        public async Task<ActionResult> PutRiderRaceEntry(int raceId, int driverId, UpdateDriverRaceEntryCommand command)
+        public async Task<ActionResult> PutDriverRaceEntry(int raceId, int driverId, UpdateDriverRaceEntryCommand command)
         {
             if (command.RaceId != raceId || command.DriverId != driverId) return BadRequest();
 
@@ -50,7 +50,7 @@ namespace StageRaceFantasy.Server.Controllers
         }
 
         [HttpDelete("{driverId}")]
-        public async Task<ActionResult> DeleteRiderRaceEntry(int raceId, int driverId)
+        public async Task<ActionResult> DeleteDriverRaceEntry(int raceId, int driverId)
         {
             var command = new DeleteDriverRaceEntryCommand(raceId, driverId);
             var result = await _mediator.Send(command);

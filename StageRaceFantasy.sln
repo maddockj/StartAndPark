@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StageRaceFantasy.Applicatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StageRaceFantasy.Api", "StageRaceFantasy.Api\StageRaceFantasy.Api.csproj", "{652ECAB1-2BB9-4635-9D0E-F1E9409861CA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StageRaceFantasy.Client", "StageRaceFantasy.Client\StageRaceFantasy.Client.csproj", "{F405011F-848C-4D35-A81E-BFFB6D3B5294}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StartAndPark.Client", "StageRaceFantasy.Client\StartAndPark.Client.csproj", "{F405011F-848C-4D35-A81E-BFFB6D3B5294}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StageRaceFantasy.Domain", "StageRaceFantasy.Domain\StageRaceFantasy.Domain.csproj", "{D40F8504-3AEE-48E4-B897-70B92311E094}"
 EndProject

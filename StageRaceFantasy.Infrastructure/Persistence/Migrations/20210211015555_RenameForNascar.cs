@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace StageRaceFantasy.Infrastructure.Persistence.Migrations
+namespace StartAndPark.Infrastructure.Persistence.Migrations
 {
     public partial class RenameForNascar : Migration
     {

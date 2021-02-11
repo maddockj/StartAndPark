@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace StageRaceFantasy.Application.Common.AutoMapper
+namespace StartAndPark.Application.Common.AutoMapper
 {
     public interface IMapFrom<T>
     {

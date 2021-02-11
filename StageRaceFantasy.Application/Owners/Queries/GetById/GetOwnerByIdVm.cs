@@ -1,8 +1,8 @@
-﻿using StageRaceFantasy.Application.Common.AutoMapper;
-using StageRaceFantasy.Domain.Entities;
+﻿using StartAndPark.Application.Common.AutoMapper;
+using StartAndPark.Domain.Entities;
 using System.Collections.Generic;
 
-namespace StageRaceFantasy.Application.FantasyTeams.Queries.GetById
+namespace StartAndPark.Application.Owners.Queries.GetById
 {
     public record GetOwnerByIdVm : IMapFrom<Owner>
     {

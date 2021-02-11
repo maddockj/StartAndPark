@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace StageRaceFantasy.Domain.Entities
+namespace StartAndPark.Domain.Entities
 {
     public class Driver
     {

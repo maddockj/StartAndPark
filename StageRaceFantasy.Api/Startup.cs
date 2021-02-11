@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using StageRaceFantasy.Application;
-using StageRaceFantasy.Infrastructure;
+using StartAndPark.Application;
+using StartAndPark.Infrastructure;
 
-namespace StageRaceFantasy.Server
+namespace StartAndPark.Server
 {
     public class Startup
     {

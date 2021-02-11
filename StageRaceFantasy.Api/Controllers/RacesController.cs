@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using StageRaceFantasy.Application.Common.Interfaces;
-using StageRaceFantasy.Application.Races.Commands.Create;
-using StageRaceFantasy.Domain.Entities;
-using StageRaceFantasy.Server.Controllers.Utils;
+using StartAndPark.Application.Common.Interfaces;
+using StartAndPark.Application.Races.Commands.Create;
+using StartAndPark.Domain.Entities;
+using StartAndPark.Server.Controllers.Utils;
 
-namespace StageRaceFantasy.Server.Controllers
+namespace StartAndPark.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

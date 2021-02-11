@@ -1,13 +1,13 @@
-﻿@page "/fantasy-teams"
+﻿@page "/owners"
 
-@using StageRaceFantasy.Application.FantasyTeams.Queries.GetAll
+@using StartAndPark.Application.Owners.Queries.GetAll
 
 @inject HttpClient httpClient
 @inject IJSRuntime js
 
 <MatHeadline2>Owners</MatHeadline2>
 <div>
-    <MatButton Link="fantasy-teams/create">Create New</MatButton>
+    <MatButton Link="owners/create">Create New</MatButton>
 </div>
 
 @if (vm == null)
@@ -35,7 +35,7 @@ else
             <td>@context.Name</td>
             <td>
                 <MatIconButton @onclick="@(() => DeleteOwner(context.Id))" Icon="delete" Style="color: red" />
-                <MatButton Link="@($"fantasy-teams/{@context.Id}")">View</MatButton>
+                <MatButton Link="@($"owners/{@context.Id}")">View</MatButton>
             </td>
         </MatTableRow>
     </MatTable>
@@ -46,7 +46,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        vm = await httpClient.GetFromJsonAsync<GetAllOwnersVm>("api/fantasy-teams");
+        vm = await httpClient.GetFromJsonAsync<GetAllOwnersVm>("api/owners");
     }
 
     async Task DeleteOwner(int ownerId)
@@ -55,7 +55,7 @@ else
 
         if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete owner {owner.Name}?"))
         {
-            await httpClient.DeleteAsync($"api/fantasy-teams/{owner.Id}");
+            await httpClient.DeleteAsync($"api/owners/{owner.Id}");
             await OnInitializedAsync();
         }
     }

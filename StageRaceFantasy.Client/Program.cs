@@ -8,7 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Client
+namespace StartAndPark.Client
 {
     public class Program
     {

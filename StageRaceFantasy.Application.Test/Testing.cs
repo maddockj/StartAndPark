@@ -6,12 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using Respawn;
-using StageRaceFantasy.Infrastructure.Persistence;
-using StageRaceFantasy.Server;
+using StartAndPark.Infrastructure.Persistence;
+using StartAndPark.Server;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Application.IntegrationTests
+namespace StartAndPark.Application.IntegrationTests
 {
     [SetUpFixture]
     public class Testing

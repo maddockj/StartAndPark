@@ -1,4 +1,4 @@
-﻿namespace StageRaceFantasy.Domain.Entities
+﻿namespace StartAndPark.Domain.Entities
 {
     public class RaceEntryDriver
     {

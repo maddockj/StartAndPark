@@ -1,9 +1,9 @@
-﻿using StageRaceFantasy.Application.Common.Interfaces;
-using StageRaceFantasy.Application.Common.Requests;
+﻿using StartAndPark.Application.Common.Interfaces;
+using StartAndPark.Application.Common.Requests;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Application.RiderRaceEntries.Commands.Delete
+namespace StartAndPark.Application.DriverRaceEntries.Commands.Delete
 {
     public record DeleteDriverRaceEntryCommand(int RaceId, int DriverId) :
         IApplicationCommand

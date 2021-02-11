@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using StageRaceFantasy.Application.Common.Interfaces;
-using StageRaceFantasy.Infrastructure.Persistence;
+using StartAndPark.Application.Common.Interfaces;
+using StartAndPark.Infrastructure.Persistence;
 
-namespace StageRaceFantasy.Infrastructure
+namespace StartAndPark.Infrastructure
 {
     public static class DependencyInjection
     {

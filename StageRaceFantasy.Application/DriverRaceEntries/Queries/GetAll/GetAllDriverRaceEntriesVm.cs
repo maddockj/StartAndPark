@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using StageRaceFantasy.Application.Common.AutoMapper;
-using StageRaceFantasy.Domain.Entities;
+using StartAndPark.Application.Common.AutoMapper;
+using StartAndPark.Domain.Entities;
 using System.Collections.Generic;
 
-namespace StageRaceFantasy.Application.RiderRaceEntries.Queries.GetAll
+namespace StartAndPark.Application.DriverRaceEntries.Queries.GetAll
 {
     public class GetAllDriverRaceEntriesVm
     {

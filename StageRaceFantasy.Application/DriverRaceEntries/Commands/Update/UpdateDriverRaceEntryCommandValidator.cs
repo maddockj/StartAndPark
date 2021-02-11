@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using StageRaceFantasy.Application.ValidationRules;
+using StartAndPark.Application.ValidationRules;
 
-namespace StageRaceFantasy.Application.RiderRaceEntries.Commands.Update
+namespace StartAndPark.Application.DriverRaceEntries.Commands.Update
 {
     public class UpdateDriverRaceEntryCommandValidator : AbstractValidator<UpdateDriverRaceEntryCommand>
     {

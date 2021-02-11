@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StageRaceFantasy.Application.Common.Interfaces;
-using StageRaceFantasy.Application.Common.Requests;
+using StartAndPark.Application.Common.Interfaces;
+using StartAndPark.Application.Common.Requests;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Application.FantasyTeamRaceEntries.Commands.RemoveRider
+namespace StartAndPark.Application.RaceEntries.Commands.RemoveDriver
 {
-    public record RemoveDriverFromRaceEntryCommand(int OwnerId, int RaceId, int RiderId)
+    public record RemoveDriverFromRaceEntryCommand(int OwnerId, int RaceId, int DriverId)
         : IApplicationCommand
     {
     }
@@ -26,7 +26,7 @@ namespace StageRaceFantasy.Application.FantasyTeamRaceEntries.Commands.RemoveRid
         {
             var ownerId = request.OwnerId;
             var raceId = request.RaceId;
-            var riderId = request.RiderId;
+            var driverId = request.DriverId;
 
             var raceEntry = await _dbContext.RaceEntries
                 .Include(x => x.RaceEntryDrivers)
@@ -36,7 +36,7 @@ namespace StageRaceFantasy.Application.FantasyTeamRaceEntries.Commands.RemoveRid
 
             if (raceEntry == null) return NotFound();
 
-            var driver = raceEntry.RaceEntryDrivers.FirstOrDefault(x => x.DriverId == riderId);
+            var driver = raceEntry.RaceEntryDrivers.FirstOrDefault(x => x.DriverId == driverId);
 
             if (driver == null) return Success();
 

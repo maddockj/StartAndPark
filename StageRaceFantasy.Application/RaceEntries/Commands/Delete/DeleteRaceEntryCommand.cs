@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StageRaceFantasy.Application.Common.Interfaces;
-using StageRaceFantasy.Application.Common.Requests;
+using StartAndPark.Application.Common.Interfaces;
+using StartAndPark.Application.Common.Requests;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StageRaceFantasy.Application.FantasyTeamRaceEntries.Commands.Delete
+namespace StartAndPark.Application.RaceEntries.Commands.Delete
 {
     public record DeleteRaceEntryCommand(int OwnerId, int RaceId)
         : IApplicationCommand

@@ -1,7 +1,7 @@
-﻿using StageRaceFantasy.Application.Common.AutoMapper;
-using StageRaceFantasy.Domain.Entities;
+﻿using StartAndPark.Application.Common.AutoMapper;
+using StartAndPark.Domain.Entities;
 
-namespace StageRaceFantasy.Application.RiderRaceEntries.Commands.Create
+namespace StartAndPark.Application.DriverRaceEntries.Commands.Create
 {
     public class CreateDriverRaceEntryDto : IMapFrom<DriverRaceEntry>
     {

@@ -1,17 +1,17 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using StageRaceFantasy.Application.FantasyTeams.Commands.Create;
-using StageRaceFantasy.Application.FantasyTeams.Queries.GetById;
-using StageRaceFantasy.Application.FantasyTeams.Queries.GetAll;
-using StageRaceFantasy.Domain.Entities;
-using StageRaceFantasy.Server.Controllers.Utils;
-using StageRaceFantasy.Application.FantasyTeams.Commands.Delete;
-using StageRaceFantasy.Application.FantasyTeams.Commands.Update;
+using StartAndPark.Application.Owners.Commands.Create;
+using StartAndPark.Application.Owners.Queries.GetById;
+using StartAndPark.Application.Owners.Queries.GetAll;
+using StartAndPark.Domain.Entities;
+using StartAndPark.Server.Controllers.Utils;
+using StartAndPark.Application.Owners.Commands.Delete;
+using StartAndPark.Application.Owners.Commands.Update;
 
-namespace StageRaceFantasy.Server.Controllers
+namespace StartAndPark.Server.Controllers
 {
-    [Route("api/fantasy-teams")]
+    [Route("api/owners")]
     [ApiController]
     public class OwnersController : ControllerBase
     {

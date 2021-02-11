@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using StageRaceFantasy.Infrastructure.Persistence;
+using StartAndPark.Infrastructure.Persistence;
 using System;
 
-namespace StageRaceFantasy.Server
+namespace StartAndPark.Server
 {
     public class Program
     {
