@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-<div>
+@*<div>
     <NavMenu />
 
     <div class="main">
@@ -12,4 +12,24 @@
             @Body
         </div>
     </div>
+</div>*@
+
+<div class="page">
+    <CascadingValue Value="@this" Name="MainLayout">
+
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+
+        <div class="main">
+            @*<div>
+                <LoginDisplay />
+            </div>*@
+
+            <div class="content px-4">
+                @Body
+            </div>
+        </div>
+
+    </CascadingValue>
 </div>

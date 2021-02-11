@@ -31,7 +31,7 @@ namespace StartAndPark.Application.Owners.Queries.GetAll
 
             return Success(new GetAllOwnersVm()
             {
-                Owners = ownerDtos,
+                ItemList = ownerDtos,
             });
         }
     }

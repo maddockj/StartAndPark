@@ -1,0 +1,14 @@
+﻿@page "/owners"
+
+@using StartAndPark.Application.Owners.Queries.GetAll
+@using StartAndPark.Client.Components
+
+@inject HttpClient httpClient
+@inject IJSRuntime js
+
+<ManagementListPage TListModel="GetAllOwnersVm" 
+                    TItem="OwnerDto"
+                    Title="Owners"
+                    IdField="@(x => x.Id)"
+                    NameField="@(x => x.Name)"
+                    ManagePath="owners"/>

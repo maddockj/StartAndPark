@@ -23,3 +23,21 @@ html, body {
         right: 0.75rem;
         top: 0.5rem;
     }
+
+/* the default highlight color when selecting a BlazorTable row SUCKS (grey-against-grey) */
+.table-active, .table-active > td, .table-active > th {
+    background-color: rgba(34, 21, 85, .30) !important;
+    font-weight: bold;
+}
+
+/* Give user the finger */
+.table-selectable tr {
+    cursor: pointer;
+}
+
+    /* better hover highlighting when a row is selectable */
+    .table-selectable .table-hover tbody tr:hover {
+        color: #eee;
+        background-color: rgba(34, 21, 85, .70);
+        font-weight: bold;
+    }

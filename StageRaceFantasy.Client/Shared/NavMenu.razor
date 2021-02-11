@@ -1,16 +1,31 @@
-﻿<MatAppBarContainer>
-    <MatAppBar Fixed="true">
-        <MatAppBarRow>
-            <MatAppBarSection>
-                <MatAppBarSection>
-                    <MatAppBarTitle>Start and Park</MatAppBarTitle>
-                </MatAppBarSection>
-                <MatAppBarSection>
-                    <MatButton Unelevated="true" Link="owners">Owners</MatButton>
-                    <MatButton Unelevated="true" Link="drivers">Drivers</MatButton>
-                    <MatButton Unelevated="true" Link="races">Races</MatButton>
-                </MatAppBarSection>
-            </MatAppBarSection>
-        </MatAppBarRow>
-    </MatAppBar>
-</MatAppBarContainer>
+﻿<div class="h2">BBCS Racing</div>
+
+<div>
+    <ul class="nav flex-column">
+        
+        @foreach (var link in menu)
+        {
+            <li class="nav-item px-2">
+                <NavLink class="nav-link" href="@link.Item2">
+                    <span class="@($"oi oi-{link.Item3}")" title="@link.Item3" aria-hidden="true" /> @link.Item1
+                </NavLink>
+            </li>
+        }
+
+    </ul>
+</div>
+
+@code {
+    private List<Tuple<string, string, string>> menu;
+
+    protected override void OnInitialized()
+    {
+        menu = new List<Tuple<string, string, string>>()
+        {
+            Tuple.Create("Owners", "owners", "person"),
+            Tuple.Create("Drivers", "drivers", "cart"),
+            Tuple.Create("Races", "races", "flag"),
+        };
+    }
+}
+

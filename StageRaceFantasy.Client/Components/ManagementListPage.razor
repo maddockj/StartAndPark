@@ -1,0 +1,156 @@
+﻿@using BlazorTable
+@using System.Linq.Expressions
+
+@inject NavigationManager _navigationManager
+@inject HttpClient httpClient
+@inject IJSRuntime js
+
+@typeparam TListModel
+@typeparam TItem
+
+<p>
+    <span class="h1">@Title</span>
+
+    <button class="btn btn-success btn-sm rounded-sm float-right" type="button" data-toggle="tooltip"
+            data-placement="top" title="Add New" @onclick="Add">
+        <i class="fa fa-plus">&nbsp;Add New</i>
+    </button>
+</p>
+
+@if (Items == null)
+{
+    <Loader />
+}
+
+<div class="table-selectable">
+    <Table TableItem="TItem" Items="@Items" PageSize="@PageSize" ShowSearchBar="true" RowClickAction="Edit">
+        @*<Column TableItem="TItem" Title="Id" Field="@IdField" Width="5%" />*@
+
+        <ActionButtonColumn TableItem="TItem" Action="edit" OnClick="@Edit" />
+
+        <Column TableItem="TItem" Title="@NameFieldTitle" Field="@NameField" />
+
+        @ChildContent
+
+        <ActionButtonColumn TableItem="TItem" Action="delete" OnClick="@Delete" />
+
+        <Pager ShowPageNumber="true" ShowTotalCount="true" />
+
+        <EmptyDataTemplate><div class="text-center">@($"none found")</div></EmptyDataTemplate>
+    </Table>
+</div>
+
+@code {
+    /// <summary>
+    /// how many items per page
+    /// </summary>
+    [Parameter]
+    public int PageSize { get; set; } = 100;
+
+    /// <summary>
+    /// the display title for this list page
+    /// </summary>
+    [Parameter]
+    public string @Title { get; set; }
+
+    /// <summary>
+    /// the expression for getting the ID of each item in the list
+    /// </summary>
+    [Parameter]
+    public Expression<Func<TItem, object>> IdField { get; set; }
+
+    /// <summary>
+    /// the expression for getting the desired display name of each item in the list
+    /// </summary>
+    [Parameter]
+    public Expression<Func<TItem, object>> NameField { get; set; }
+
+    /// <summary>
+    /// an optional string title for the NameField (e.g. Description), defaults to "Name"
+    /// </summary>
+    [Parameter]
+    public string NameFieldTitle { get; set; } = "Name";
+
+    /// <summary>
+    /// UI (html) segment to render additional columns into the list table
+    /// </summary>
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    /// <summary>
+    /// the "type" part of the url to the editor page for these items.
+    /// Example: the "participant" in /manage/participant/{id}
+    /// </summary>
+    [Parameter]
+    public string ManagePath { get; set; }
+
+
+    // the full item list for this list view
+    public List<TItem> Items { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadItems();
+    }
+
+    protected async Task LoadItems()
+    {
+        var listModel = await httpClient.GetFromJsonAsync<TListModel>($"api/{ManagePath.Trim()}");
+        Items = listModel.ItemList;
+    }
+
+    // create a new item
+    private void Add()
+    {
+        // just invokes the editor with an ID of 0
+        _navigationManager.NavigateTo(GetEditorPath(id: null));
+    }
+
+    // edit the selected item
+    private void Edit(TItem item)
+    {
+        if (item == null) return;
+
+        _navigationManager.NavigateTo(GetEditorPath(item));
+    }
+
+    private async Task Delete(TItem item)
+    {
+        if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete {GetItemName(item)}?"))
+        {
+            await httpClient.DeleteAsync($"api/{GetEditorPath(item)}");
+            await LoadItems();
+        }
+    }
+
+    private string GetEditorPath(TItem item)
+    {
+        if (item == null) throw new ArgumentNullException(nameof(item));
+
+        return GetEditorPath(GetItemId(item));
+    }
+
+    // put together the right navigation path for editing the given item ID
+    private string GetEditorPath(int? id)
+    {
+        return $"/{ManagePath.Trim()}/{(id.HasValue ? id : "create")}";
+    }
+
+    private int GetItemId(TItem item)
+    {
+        if (item == null) return 0;
+
+        var id = IdField?.Compile()?.Invoke(item) as int?;
+
+        return id ?? 0;
+    }
+
+    // get the display name for a single item in the list
+    private string GetItemName(TItem item)
+    {
+        if (item == null) return null;
+
+        return NameField?.Compile()?.Invoke(item)?.ToString();
+    }
+}

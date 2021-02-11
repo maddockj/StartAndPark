@@ -1,0 +1,162 @@
+﻿@using System.Text
+
+@* Provides a convenient button component for one of a predefined set of actions to reduce repeat markup all over the place*@
+
+<button type="@_type"
+        data-toggle="tooltip"
+        data-placement="top"
+        class="@GetCssClass()"
+        title="@GetTitle()"
+        @onclick="@OnClick"
+        @onclick:stopPropagation="@StopPropagationOnClick">
+
+    <span class="@($"oi oi-{_iconName}")" title="@_iconName" aria-hidden="true">@GetButtonText()</span>
+
+</button>
+
+@code {
+    /// <summary>
+    /// What kind of action this button performs. Possible values currently:
+    /// add, edit, delete, restore, save. Not case-sensitive. Required.
+    /// </summary>
+    [Parameter]
+    public string Action
+    {
+        get => _action;
+        set
+        {
+            if (value == _action) return;
+
+            SetAction(value);
+            _action = value;
+        }
+    }
+
+    /// <summary>
+    /// Should this button show text on it? Defaults to no (icon-only).
+    /// Ignored if ButtonText is explicitly set.
+    /// </summary>
+    [Parameter]
+    public bool IsTextButton { get; set; }
+
+    /// <summary>
+    /// Should this button minimize the padding around its contents to take up less space?
+    /// Defaults to yes.
+    /// </summary>
+    [Parameter]
+    public bool MinimizePadding { get; set; } = true;
+
+    /// <summary>
+    /// Should this button use the bootstrap "outlined" look instead of filled-in color?
+    /// Defaults to no.
+    /// </summary>
+    [Parameter]
+    public bool IsOutlined { get; set; }
+
+    /// <summary>
+    /// What to do when this button is clicked
+    /// </summary>
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    /// <summary>
+    /// Prevent click handling from bubbling up after doing the action defined here. Defaults to true.
+    /// </summary>
+    [Parameter]
+    public bool StopPropagationOnClick { get; set; } = true;
+
+    /// <summary>
+    /// Explicit text to append to the action to show on the button's label. For example, if this is set to "Client,"
+    /// and it's an "add" action, then the button label would read "Add Client." If this value is provided, then the
+    /// button label will be shown regardless of the value of IsTextButton.
+    /// </summary>
+    [Parameter]
+    public string ButtonText { get; set; }
+
+    /// <summary>
+    /// Additional css class(es) to apply to this button's markup
+    /// </summary>
+    [Parameter]
+    public string CssClass { get; set; }
+
+
+    #region private fields
+    private string _action;
+    private string _type = "button";
+    private string _cssType;
+    private string _title;
+    private string _iconName;
+    #endregion
+
+    protected void SetAction(string action)
+    {
+        // set fields based on the given action type
+        switch (action.ToUpper())
+        {
+            case "ADD":
+                _cssType = "success";
+                _title = "Add";
+                _iconName = "plus";
+                break;
+
+            case "EDIT":
+                _cssType = "primary";
+                _title = "Edit";
+                _iconName = "pencil";
+                break;
+
+            case "DELETE":
+                _cssType = "danger";
+                _title = "Delete";
+                _iconName = "trash";
+                break;
+
+            case "SAVE":
+                _cssType = "primary";
+                _title = "Save";
+                _iconName = "check";
+                _type = "submit";
+                break;
+
+            default:
+                throw new NotImplementedException($"Unhandled Button Action {Action}");
+        }
+    }
+
+    // build the full css class string to set on the button
+    private string GetCssClass()
+    {
+        var sb = new StringBuilder("btn btn-sm rounded-sm");
+
+        sb.Append(" btn-");
+        if (IsOutlined)
+        {
+            sb.Append("outline-");
+        }
+        sb.Append(_cssType);
+
+        if (MinimizePadding)
+        {
+            sb.Append(" py-0 px-1");
+        }
+
+        if (CssClass != null)
+        {
+            sb.Append($" {CssClass}");
+        }
+
+        return sb.ToString();
+    }
+
+    // get the title (tooltip) when the button is hovered
+    private string GetTitle()
+    {
+        return ButtonText == null ? _title : $"{_title} {ButtonText}";
+    }
+
+    // get the text to show on the button itself
+    private string GetButtonText()
+    {
+        return (IsTextButton || ButtonText != null) ? $" {GetTitle()}" : null;
+    }
+}

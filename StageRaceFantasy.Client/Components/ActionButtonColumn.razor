@@ -1,0 +1,59 @@
+﻿@using BlazorTable
+@using StartAndPark.Client.Components.Forms
+
+@* Encapsulates an Action Button in a predefined column for easy use in BlazorTables*@
+
+@typeparam TableItem
+
+@inherits Column<TableItem>
+
+@code {
+    private string _action;
+
+    /// <summary>
+    /// The type of action the button should perform. See ActionButton.razor for possible values
+    /// </summary>
+    [Parameter]
+    public string Action
+    {
+        get => _action;
+        set
+        {
+            if (value == _action) return;
+
+            _action = value;
+            Table?.Refresh();
+        }
+    }
+
+    /// <summary>
+    /// Something to do when the button gets clicked
+    /// </summary>
+    [Parameter]
+    public EventCallback<TableItem> OnClick { get; set; }
+
+    /// <summary>
+    /// Prevent click handling from bubbling up after doing the action defined here. Defaults to true.
+    /// </summary>
+    [Parameter]
+    public bool StopPropagationOnClick { get; set; } = true;
+
+
+    protected override void OnInitialized()
+    {
+        // predefine some attributes of the base Column class
+        Title = "";
+        Width = "3%";
+        Class = "text-center";
+
+        // This black magic is defining the markup for the RenderFragment of the base Column class that you'd usually
+        // see in <Template> tags in a razor file. We want to do this here so that the base class renders everything about the enclosing column,
+        // and all we need to do is override how the cell contents are built.
+        Template = item => __builder =>
+        {
+        <ActionButton Action="@Action" OnClick="e => OnClick.InvokeAsync(item)" StopPropagationOnClick="@StopPropagationOnClick" />
+        };
+
+        base.OnInitialized();
+    }
+}
