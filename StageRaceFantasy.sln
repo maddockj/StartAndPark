@@ -14,9 +14,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StageRaceFantasy.Domain", "StageRaceFantasy.Domain\StageRaceFantasy.Domain.csproj", "{D40F8504-3AEE-48E4-B897-70B92311E094}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1D4CC55E-BF40-4E7F-B267-2CC511846BAC}"
-	ProjectSection(SolutionItems) = preProject
-		README.md = README.md
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StageRaceFantasy.Application.IntegrationTests", "StageRaceFantasy.Application.Test\StageRaceFantasy.Application.IntegrationTests.csproj", "{816E9F71-D999-40AE-9E52-E711621CD0C5}"
 EndProject
