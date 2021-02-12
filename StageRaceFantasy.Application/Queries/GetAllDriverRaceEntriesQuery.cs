@@ -57,7 +57,7 @@ namespace StartAndPark.Application
 
             return Success(new GetAllDriverRaceEntriesVm()
             {
-                Entries = driverRaceEntries
+                ItemList = driverRaceEntries
                     .Concat(notEnteredDrivers)
                     .ToList(),
             });

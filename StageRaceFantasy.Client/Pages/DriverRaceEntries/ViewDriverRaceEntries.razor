@@ -1,4 +1,4 @@
-﻿@page "/races/{raceId:int}/entries"
+﻿@page "/races/{raceId:int}/xentries"
 
 @using StartAndPark.Application
 
@@ -14,13 +14,13 @@ else
     <MatHeadline2>@race.Name</MatHeadline2>
     <MatHeadline4>Race Entries</MatHeadline4>
 
-    if (vm.Entries.Count == 0)
+    if (vm.ItemList.Count == 0)
     {
         <p>No drivers found.</p>
     }
     else
     {
-        <MatTable Items="@vm.Entries"
+        <MatTable Items="@vm.ItemList"
                   FilterByColumnName="DriverLastName"
                   ShowPaging="false"
                   PageSize="int.MaxValue"
@@ -69,7 +69,7 @@ else
 
     async Task EnterDriver(int driverId)
     {
-        var raceEntry = vm.Entries.First(x => x.DriverId == driverId);
+        var raceEntry = vm.ItemList.First(x => x.DriverId == driverId);
         raceEntry.IsEntered = true;
 
         var addRaceEntryDto = new CreateDriverRaceEntryDto()
@@ -84,7 +84,7 @@ else
 
     async Task WithdrawDriver(int driverId)
     {
-        var raceEntry = vm.Entries.First(x => x.DriverId == driverId);
+        var raceEntry = vm.ItemList.First(x => x.DriverId == driverId);
         raceEntry.IsEntered = false;
 
         await httpClient.DeleteAsync($"api/races/{raceId}/entries/{driverId}");
@@ -95,7 +95,7 @@ else
 
     void UpdateRaceEntry(int driverid)
     {
-        var raceEntry = vm.Entries.First(x => x.DriverId == driverid);
+        var raceEntry = vm.ItemList.First(x => x.DriverId == driverid);
 
         if (modifiedDriverIds.Contains(driverid)) return;
 
@@ -108,7 +108,7 @@ else
 
         foreach (int modifiedDriverId in modifiedDriverIds)
         {
-            var raceEntry = vm.Entries.FirstOrDefault(x => x.DriverId == modifiedDriverId);
+            var raceEntry = vm.ItemList.FirstOrDefault(x => x.DriverId == modifiedDriverId);
 
             var update = new UpdateDriverRaceEntryCommand(
                 raceEntry.RaceId,

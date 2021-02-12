@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using StartAndPark.Application;
@@ -18,12 +19,12 @@ namespace StartAndPark.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<GetAllDriverRaceEntriesVm>> GetDriverRaceEntries(int raceId)
+        public async Task<ActionResult<IEnumerable<DriverRaceEntryDto>>> GetDriverRaceEntries(int raceId)
         {
             var query = new GetAllDriverRaceEntriesQuery(raceId);
             var result = await _mediator.Send(query);
 
-            return ResponseHelpers.BuildRawContentResponse(this, result);
+            return result.Content.ItemList;
         }
 
         [HttpPut("{driverId}")]

@@ -7,5 +7,6 @@
         public int RaceId { get; set; }
         public Race Race { get; set; }
         public string CarNumber { get; set; }
+        public string Tier { get; set; }
     }
 }

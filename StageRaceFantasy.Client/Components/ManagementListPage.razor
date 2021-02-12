@@ -20,7 +20,8 @@
 }
 
 <div class="table-selectable">
-    <Table TableItem="TItem" Items="@Items" PageSize="@PageSize" ShowSearchBar="false" RowClickAction="Edit">
+    <Table TableItem="TItem" Items="@Items" PageSize="@PageSize" ShowSearchBar="false" 
+           RowClickAction="@(RowClickAction ?? Edit)">
         @*<Column TableItem="TItem" Title="Id" Field="@IdField" Width="5%" />*@
 
         <ActionButtonColumn TableItem="TItem" Action="edit" OnClick="@Edit" />
@@ -80,6 +81,9 @@
     /// </summary>
     [Parameter]
     public string ManagePath { get; set; }
+
+    [Parameter]
+    public Action<TItem> RowClickAction { get; set; }
 
 
     // the full item list for this list view

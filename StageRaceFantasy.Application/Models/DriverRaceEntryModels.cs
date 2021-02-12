@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using StartAndPark.Application.Common.AutoMapper;
+using StartAndPark.Application.Common.Interfaces;
 using StartAndPark.Domain.Entities;
 using System.Collections.Generic;
 
 namespace StartAndPark.Application
 {
-    public class GetAllDriverRaceEntriesVm
+    public class GetAllDriverRaceEntriesVm : IListVm<DriverRaceEntryDto>
     {
-        public List<DriverRaceEntryDto> Entries { get; set; }
+        public List<DriverRaceEntryDto> ItemList { get; set; }
     }
 
     public class DriverRaceEntryDto : IMapFrom
@@ -18,6 +19,7 @@ namespace StartAndPark.Application
         public string DriverLastName { get; set; }
         public bool IsEntered { get; set; }
         public string CarNumber { get; set; }
+        public string Tier { get; set; }
 
         public void Mapping(Profile profile)
         {

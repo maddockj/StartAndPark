@@ -1,14 +1,17 @@
 ﻿@page "/races"
 
-@using BlazorTable 
+@using BlazorTable
 @using StartAndPark.Application
 @using StartAndPark.Client.Components
+
+@inject NavigationManager _navigationManager
 
 <ManagementListPage TItem="RaceDto"
                     Title="Races"
                     IdField="@(x => x.Id)"
                     NameField="@(x => x.Name)"
-                    ManagePath="races">
+                    ManagePath="races"
+                    RowClickAction="ShowEntries">
 
     <Column TableItem="RaceDto" Title="Track" Field="@(x => x.TrackName)" Sortable="true" />
 
@@ -24,3 +27,12 @@
     </Column>
 
 </ManagementListPage>
+
+@code {
+    private void ShowEntries(RaceDto race)
+    {
+        if (race == null) return;
+
+        _navigationManager.NavigateTo($"races/{race.Id}/entries");
+    }
+}

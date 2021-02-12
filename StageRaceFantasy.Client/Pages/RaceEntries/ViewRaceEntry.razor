@@ -91,7 +91,7 @@ else
         vm = await httpClient.GetJsonAsync<GetRaceEntryByIdVm>($"api/owners/{ownerId}/race-entries/{raceId}");
         var allEnteredDrivers = await httpClient.GetJsonAsync<GetAllDriverRaceEntriesVm>($"api/races/{raceId}/entries");
 
-        availableDrivers = allEnteredDrivers.Entries.Where(x => !vm.Drivers.Any(r => r.Id == x.DriverId)).ToArray();
+        availableDrivers = allEnteredDrivers.ItemList.Where(x => !vm.Drivers.Any(r => r.Id == x.DriverId)).ToArray();
 
         driverSelections = vm.Drivers
             .Select((x, i) => new DriverSelectionRow(i + 1, x))
