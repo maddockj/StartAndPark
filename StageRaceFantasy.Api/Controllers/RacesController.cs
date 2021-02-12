@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StartAndPark.Application.Common.Interfaces;
 using StartAndPark.Application.Races.Commands.Create;
+using StartAndPark.Application.Races.Queries.GetAll;
 using StartAndPark.Domain.Entities;
 using StartAndPark.Server.Controllers.Utils;
 
@@ -26,11 +27,16 @@ namespace StartAndPark.Server.Controllers
 
         // GET: api/Races
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Race>>> GetRaces()
+        public async Task<ActionResult<IEnumerable<RaceDto>>> GetRaces()
         {
-            return await _context.Races
-                .OrderBy(x => x.Name)
-                .ToListAsync();
+            var result = await _mediator.Send(new GetAllRacesQuery());
+
+            return result.Content.ItemList;
+
+            //return await _context.Races
+            //    .OrderBy(x => x.StartTime)
+            //    .ThenBy(x => x.Id)
+            //    .ToListAsync();
         }
 
         // GET: api/Races/5

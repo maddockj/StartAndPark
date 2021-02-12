@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StartAndPark.Domain.Entities
 {
@@ -16,6 +18,11 @@ namespace StartAndPark.Domain.Entities
         [Required]
         public int TrackId { get; set; }
         public Track Track { get; set; }
+
+        public DateTime? StartTime { get; set; }
+        
+        [Required]
+        public bool IsComplete { get; set; }
 
         public List<DriverRaceEntry> DriverEntries { get; set; }
 

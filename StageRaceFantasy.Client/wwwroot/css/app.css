@@ -45,5 +45,5 @@ html, body {
     .table-selectable .table-hover tbody tr:hover {
         color: #eee;
         background-color: rgba(34, 21, 85, .70);
-        font-weight: bold;
+        /*font-weight: bold;*/
     }

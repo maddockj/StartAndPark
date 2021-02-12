@@ -11,19 +11,27 @@
                 Title="Race"
                 IdField="@(x => x.Id)"
                 ItemId="@RaceId">
-        <InputGroup Label="Race Name" Colspan="12">
-            <InputText @bind-Value="@context.Name" class="form-control form-control-sm" id="Name" />
-        </InputGroup>
 
-        <InputGroup Label="Track" Colspan="12" ContainerClass="pt-2">
-            <InputSelect @bind-Value="@context.TrackId" class="form-control form-control-sm" id="Track" >
-                <option></option>
-                @foreach (var track in _tracks)
-                {
-                    <option value="@track.Id">@track.Name</option>
-                }
-            </InputSelect>
-        </InputGroup>
+    <InputGroup Label="Race Name" Colspan="12">
+        <InputText @bind-Value="@context.Name" class="form-control form-control-sm" id="Name" />
+    </InputGroup>
+
+    <InputGroup Label="Track" Colspan="12" ContainerClass="pt-2">
+        <InputSelect @bind-Value="@context.TrackId" class="form-control form-control-sm" id="Track" >
+            <option></option>
+            @foreach (var track in _tracks)
+            {
+                <option value="@track.Id">@track.Name</option>
+            }
+        </InputSelect>
+    </InputGroup>
+
+    <InputGroup Label="Start Time" Colspan="12" ContainerClass="pt-2">
+        <InputDateTime @bind-Value="@context.StartTime" class="form-control form-control-sm" id="StartTime" />
+    </InputGroup>
+
+    <InputGroupCheckbox Label="Complete" @bind-Value="@context.IsComplete" ContainerClass="pl-3 pt-2" />
+
 </ManagementPage>
 
 @code {

@@ -1,9 +1,26 @@
 ﻿@page "/races"
 
+@using BlazorTable 
+@using StartAndPark.Application.Races.Queries.GetAll
 @using StartAndPark.Client.Components
 
-<ManagementListPage TItem="Race"
+<ManagementListPage TItem="RaceDto"
                     Title="Races"
                     IdField="@(x => x.Id)"
                     NameField="@(x => x.Name)"
-                    ManagePath="races" />
+                    ManagePath="races">
+
+    <Column TableItem="RaceDto" Title="Track" Field="@(x => x.TrackName)" Sortable="true" />
+
+    <Column TableItem="RaceDto" Title="Start Time (Eastern)" Field="@(x => x.StartTime)" Sortable="true" DefaultSortColumn="true" />
+
+    <Column TableItem="RaceDto" Title="Completed" Field="@(x => x.IsComplete)" Width="3%">
+        <Template>
+            @if (context.IsComplete)
+            {
+                <span class="oi oi-check" />
+            }
+        </Template>
+    </Column>
+
+</ManagementListPage>
