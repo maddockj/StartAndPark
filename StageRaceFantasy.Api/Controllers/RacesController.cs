@@ -5,8 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StartAndPark.Application.Common.Interfaces;
-using StartAndPark.Application.Races.Commands.Create;
-using StartAndPark.Application.Races.Queries.GetAll;
+using StartAndPark.Application;
 using StartAndPark.Domain.Entities;
 using StartAndPark.Server.Controllers.Utils;
 

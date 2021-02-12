@@ -1,12 +1,7 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using StartAndPark.Application.Commands.FanasyTeamRaceEntries;
-using StartAndPark.Application.RaceEntries.Commands.Create;
-using StartAndPark.Application.RaceEntries.Commands.Delete;
-using StartAndPark.Application.RaceEntries.Commands.RemoveDriver;
-using StartAndPark.Application.RaceEntries.Queries.GetAll;
-using StartAndPark.Application.RaceEntries.Queries.GetById;
+using StartAndPark.Application;
 using StartAndPark.Domain.Entities;
 using StartAndPark.Server.Controllers.Utils;
 

@@ -1,10 +1,7 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using StartAndPark.Application.DriverRaceEntries.Commands.Create;
-using StartAndPark.Application.DriverRaceEntries.Commands.Delete;
-using StartAndPark.Application.DriverRaceEntries.Commands.Update;
-using StartAndPark.Application.DriverRaceEntries.Queries.GetAll;
+using StartAndPark.Application;
 using StartAndPark.Server.Controllers.Utils;
 
 namespace StartAndPark.Server.Controllers

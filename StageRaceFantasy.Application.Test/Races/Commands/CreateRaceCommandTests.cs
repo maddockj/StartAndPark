@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using StartAndPark.Application.Races.Commands.Create;
 using StartAndPark.Application.IntegrationTests.Assertions;
 using StartAndPark.Domain.Entities;
 using System.Threading.Tasks;

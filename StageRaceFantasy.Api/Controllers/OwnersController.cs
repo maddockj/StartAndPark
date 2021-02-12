@@ -1,13 +1,9 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using StartAndPark.Application.Owners.Commands.Create;
-using StartAndPark.Application.Owners.Queries.GetById;
-using StartAndPark.Application.Owners.Queries.GetAll;
+using StartAndPark.Application;
 using StartAndPark.Domain.Entities;
 using StartAndPark.Server.Controllers.Utils;
-using StartAndPark.Application.Owners.Commands.Delete;
-using StartAndPark.Application.Owners.Commands.Update;
 using System.Collections.Generic;
 
 namespace StartAndPark.Server.Controllers
