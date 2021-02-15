@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace StartAndPark.Application
 {
-    public class GetRaceEntryByIdVm : IMapFrom<RaceEntry>
+    public class GetRacePickByIdVm : IMapFrom<RacePick>
     {
         public int OwnerId { get; set; }
         public int RaceId { get; set; }
@@ -13,12 +13,12 @@ namespace StartAndPark.Application
         public List<DriverDto> Drivers { get; set; }
     }
 
-    public class GetAllRaceEntriesVm
+    public class GetAllRacePicksVm
     {
-        public List<RaceEntryDto> Entries { get; set; }
+        public List<RacePickDto> Picks { get; set; }
     }
 
-    public class RaceEntryDto : IMapFrom<RaceEntry>
+    public class RacePickDto : IMapFrom<RacePick>
     {
         public int OwnerId { get; set; }
         public int RaceId { get; set; }

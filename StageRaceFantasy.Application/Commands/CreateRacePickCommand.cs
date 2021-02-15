@@ -8,22 +8,22 @@ using System.Threading.Tasks;
 
 namespace StartAndPark.Application
 {
-    public record CreateRaceEntryCommand(int OwnerId, int RaceId)
+    public record CreateRacePickCommand(int OwnerId, int RaceId)
         : IApplicationCommand
     {
     }
 
-    public class CreateRaceEntryHandler : ApplicationRequestHandler<CreateRaceEntryCommand>
+    public class CreateRacePickHandler : ApplicationRequestHandler<CreateRacePickCommand>
     {
         private readonly IApplicationDbContext _dbContext;
 
-        public CreateRaceEntryHandler(IApplicationDbContext dbContext)
+        public CreateRacePickHandler(IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
         public override async Task<ApplicationRequestResult> Handle(
-            CreateRaceEntryCommand request,
+            CreateRacePickCommand request,
             CancellationToken cancellationToken)
         {
             var raceId = request.RaceId;
@@ -36,13 +36,13 @@ namespace StartAndPark.Application
 
             if (!raceExists || !ownerExists) return NotFound();
 
-            var entry = new RaceEntry()
+            var racePick = new RacePick()
             {
                 RaceId = raceId,
                 OwnerId = ownerId,
             };
 
-            await _dbContext.RaceEntries.AddAsync(entry, cancellationToken);
+            await _dbContext.RacePicks.AddAsync(racePick, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Success();
@@ -50,7 +50,7 @@ namespace StartAndPark.Application
 
         public bool RaceEntryExists(int raceId, int teamId)
         {
-            return _dbContext.RaceEntries
+            return _dbContext.RacePicks
                 .Any(x => x.RaceId == raceId && x.OwnerId == teamId);
         }
     }

@@ -27,7 +27,7 @@ namespace StartAndPark.Application
             var ownerId = request.OwnerId;
 
             var owner = await _dbContext.Owners
-                .Include(x => x.RaceEntries)
+                .Include(x => x.RacePicks)
                     .ThenInclude(x => x.Race)
                 .FirstOrDefaultAsync(x => x.Id == ownerId, cancellationToken);
 

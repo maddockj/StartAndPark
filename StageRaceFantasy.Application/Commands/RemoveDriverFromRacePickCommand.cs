@@ -7,40 +7,40 @@ using System.Threading.Tasks;
 
 namespace StartAndPark.Application
 {
-    public record RemoveDriverFromRaceEntryCommand(int OwnerId, int RaceId, int DriverId)
+    public record RemoveDriverFromRacePickCommand(int OwnerId, int RaceId, int DriverId)
         : IApplicationCommand
     {
     }
 
-    public class RemoveDriverFromRaceEntryHandler : ApplicationRequestHandler<RemoveDriverFromRaceEntryCommand>
+    public class RemoveDriverFromRacePickHandler : ApplicationRequestHandler<RemoveDriverFromRacePickCommand>
     {
         private readonly IApplicationDbContext _dbContext;
 
-        public RemoveDriverFromRaceEntryHandler(IApplicationDbContext dbContext)
+        public RemoveDriverFromRacePickHandler(IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public override async Task<ApplicationRequestResult> Handle(RemoveDriverFromRaceEntryCommand request,
+        public override async Task<ApplicationRequestResult> Handle(RemoveDriverFromRacePickCommand request,
                                                                     CancellationToken cancellationToken)
         {
             var ownerId = request.OwnerId;
             var raceId = request.RaceId;
             var driverId = request.DriverId;
 
-            var raceEntry = await _dbContext.RaceEntries
-                .Include(x => x.RaceEntryDrivers)
+            var racePick = await _dbContext.RacePicks
+                .Include(x => x.RacePickDrivers)
                 .FirstOrDefaultAsync(
                     x => x.OwnerId == ownerId && x.RaceId == raceId,
                     cancellationToken);
 
-            if (raceEntry == null) return NotFound();
+            if (racePick == null) return NotFound();
 
-            var driver = raceEntry.RaceEntryDrivers.FirstOrDefault(x => x.DriverId == driverId);
+            var driver = racePick.RacePickDrivers.FirstOrDefault(x => x.DriverId == driverId);
 
             if (driver == null) return Success();
 
-            raceEntry.RaceEntryDrivers.Remove(driver);
+            racePick.RacePickDrivers.Remove(driver);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Success();

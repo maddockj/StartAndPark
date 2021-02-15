@@ -24,7 +24,7 @@ namespace StartAndPark.Application
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<DriverRaceEntry, DriverRaceEntryDto>();
+            profile.CreateMap<RaceEntry, DriverRaceEntryDto>();
 
             profile.CreateMap<Race, DriverRaceEntryDto>()
                 .ForMember(dest => dest.RaceId, opt => opt.MapFrom(src => src.Id))
@@ -36,7 +36,7 @@ namespace StartAndPark.Application
         }
     }
 
-    public class CreateDriverRaceEntryDto : IMapFrom<DriverRaceEntry>
+    public class CreateDriverRaceEntryDto : IMapFrom<RaceEntry>
     {
         public int RaceId { get; set; }
         public int DriverId { get; set; }

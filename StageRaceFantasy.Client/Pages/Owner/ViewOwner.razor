@@ -28,7 +28,7 @@ else
         <MatButton OnClick="@EnterRace" Disabled="@(selectedRaceId == 0)">Enter</MatButton>
     }
 
-    if (vm.RaceEntries.Count() == 0)
+    if (vm.RacePicks.Count() == 0)
     {
         <MatBody1>You have not entered any races yet.</MatBody1>
     }
@@ -36,7 +36,7 @@ else
     {
         <MatHeadline3>Entered Races</MatHeadline3>
 
-        <MatTable Items="@vm.RaceEntries"
+        <MatTable Items="@vm.RacePicks"
               PageSize="int.MaxValue"
               ShowPaging="false"
               Striped="true">
@@ -68,12 +68,12 @@ else
         var allRaces = await httpClient.GetJsonAsync<Race[]>("api/races");
 
         selectedRaceId = 0;
-        unenteredRaces = allRaces.Where(race => !vm.RaceEntries.Any(x => x.RaceId == race.Id)).ToArray();
+        unenteredRaces = allRaces.Where(race => !vm.RacePicks.Any(x => x.RaceId == race.Id)).ToArray();
     }
 
     private async Task EnterRace()
     {
-        var raceEntry = new CreateRaceEntryCommand(ownerId, selectedRaceId);
+        var raceEntry = new CreateRacePickCommand(ownerId, selectedRaceId);
 
         await httpClient.PostAsJsonAsync($"api/owners/{ownerId}/race-entries", raceEntry);
 

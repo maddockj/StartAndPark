@@ -6,33 +6,33 @@ using System.Threading.Tasks;
 
 namespace StartAndPark.Application
 {
-    public record DeleteRaceEntryCommand(int OwnerId, int RaceId)
+    public record DeleteRacePickCommand(int OwnerId, int RaceId)
         : IApplicationCommand
     {
     }
 
-    public class DeleteRaceEntryHandler : ApplicationRequestHandler<DeleteRaceEntryCommand>
+    public class DeleteRacePickHandler : ApplicationRequestHandler<DeleteRacePickCommand>
     {
         private readonly IApplicationDbContext _dbContext;
 
-        public DeleteRaceEntryHandler(IApplicationDbContext dbContext)
+        public DeleteRacePickHandler(IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public override async Task<ApplicationRequestResult> Handle(DeleteRaceEntryCommand request, CancellationToken cancellationToken)
+        public override async Task<ApplicationRequestResult> Handle(DeleteRacePickCommand request, CancellationToken cancellationToken)
         {
             var ownerId = request.OwnerId;
             var raceId = request.RaceId;
 
-            var entry = await _dbContext.RaceEntries
+            var racePick = await _dbContext.RacePicks
                 .FirstOrDefaultAsync(
                     x => x.OwnerId == ownerId && x.RaceId == raceId,
                     cancellationToken);
 
-            if (entry == null) return NotFound();
+            if (racePick == null) return NotFound();
 
-            _dbContext.RaceEntries.Remove(entry);
+            _dbContext.RacePicks.Remove(racePick);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Success();

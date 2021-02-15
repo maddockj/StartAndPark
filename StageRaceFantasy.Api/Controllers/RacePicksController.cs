@@ -9,35 +9,35 @@ namespace StartAndPark.Server.Controllers
 {
     [Route("api/owners/{ownerId}/race-entries")]
     [ApiController]
-    public class RaceEntriesController : ControllerBase
+    public class RacePicksController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public RaceEntriesController(IMediator mediator)
+        public RacePicksController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<ActionResult<GetAllRaceEntriesVm>> GetRaceEntries(int ownerId)
+        public async Task<ActionResult<GetAllRacePicksVm>> GetRacePicks(int ownerId)
         {
-            var query = new GetAllRaceEntriesQuery(ownerId);
+            var query = new GetAllRacePicksQuery(ownerId);
             var result = await _mediator.Send(query);
 
             return ResponseHelpers.BuildRawContentResponse(this, result);
         }
 
         [HttpGet("{raceId}")]
-        public async Task<ActionResult<GetRaceEntryByIdVm>> GetRaceEntry(int ownerId, int raceId)
+        public async Task<ActionResult<GetRacePickByIdVm>> GetRacePick(int ownerId, int raceId)
         {
-            var query = new GetRaceEntryByIdQuery(ownerId, raceId);
+            var query = new GetRacePicksByIdQuery(ownerId, raceId);
             var result = await _mediator.Send(query);
 
             return ResponseHelpers.BuildRawContentResponse(this, result);
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostRaceEntry(int ownerId, CreateRaceEntryCommand command)
+        public async Task<ActionResult> PostRacePick(int ownerId, CreateRacePickCommand command)
         {
             if (command.OwnerId != ownerId) return BadRequest();
 
@@ -47,9 +47,9 @@ namespace StartAndPark.Server.Controllers
         }
 
         [HttpDelete("{raceId}")]
-        public async Task<IActionResult> DeleteRaceEntry(int ownerId, int raceId)
+        public async Task<IActionResult> DeleteRacePick(int ownerId, int raceId)
         {
-            var command = new DeleteRaceEntryCommand(ownerId, raceId);
+            var command = new DeleteRacePickCommand(ownerId, raceId);
             var result = await _mediator.Send(command);
 
             return ResponseHelpers.BuildNoContentResponse(this, result);
@@ -58,7 +58,7 @@ namespace StartAndPark.Server.Controllers
         [HttpPost("{raceId}/drivers/{driverId}")]
         public async Task<IActionResult> AddDriver(int ownerId, int raceId, int driverId)
         {
-            var command = new AddDriverToRaceEntryCommand(ownerId, raceId, driverId);
+            var command = new AddDriverToRacePickCommand(ownerId, raceId, driverId);
             var result = await _mediator.Send(command);
 
             return ResponseHelpers.BuildNoContentResponse(this, result);
@@ -67,7 +67,7 @@ namespace StartAndPark.Server.Controllers
         [HttpDelete("{raceId}/drivers/{driverId}")]
         public async Task<IActionResult> RemoveDriver(int ownerId, int raceId, int driverId)
         {
-            var command = new RemoveDriverFromRaceEntryCommand(ownerId, raceId, driverId);
+            var command = new RemoveDriverFromRacePickCommand(ownerId, raceId, driverId);
             var result = await _mediator.Send(command);
 
             return ResponseHelpers.BuildNoContentResponse(this, result);

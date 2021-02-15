@@ -1,9 +1,9 @@
 ﻿namespace StartAndPark.Domain.Entities
 {
-    public class RaceEntryDriver
+    public class RacePickDrivers
     {
-        public int RaceEntryId { get; set; }
-        public RaceEntry RaceEntry { get; set; }
+        public int RacePickId { get; set; }
+        public RacePick RacePick { get; set; }
         public int DriverId { get; set; }
         public Driver Driver { get; set; }
     }

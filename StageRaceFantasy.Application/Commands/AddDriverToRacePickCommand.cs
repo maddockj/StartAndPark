@@ -8,29 +8,29 @@ using System.Threading.Tasks;
 
 namespace StartAndPark.Application
 {
-    public record AddDriverToRaceEntryCommand(int OwnerId, int RaceId, int DriverId)
+    public record AddDriverToRacePickCommand(int OwnerId, int RaceId, int DriverId)
         : IApplicationCommand
     {
     }
 
-    public class AddDriverToRaceEntryHandler : ApplicationRequestHandler<AddDriverToRaceEntryCommand>
+    public class AddDriverToRacePickHandler : ApplicationRequestHandler<AddDriverToRacePickCommand>
     {
         private readonly IApplicationDbContext _dbContext;
 
-        public AddDriverToRaceEntryHandler(IApplicationDbContext dbContext)
+        public AddDriverToRacePickHandler(IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public override async Task<ApplicationRequestResult> Handle(AddDriverToRaceEntryCommand request,
+        public override async Task<ApplicationRequestResult> Handle(AddDriverToRacePickCommand request,
                                                                     CancellationToken cancellationToken)
         {
             var ownerId = request.OwnerId;
             var raceId = request.RaceId;
             var driverId = request.DriverId;
 
-            var raceEntry = await _dbContext.RaceEntries
-                .Include(x => x.RaceEntryDrivers)
+            var racePick = await _dbContext.RacePicks
+                .Include(x => x.RacePickDrivers)
                 .FirstOrDefaultAsync(
                     x => x.OwnerId == ownerId && x.RaceId == raceId,
                     cancellationToken);
@@ -38,15 +38,15 @@ namespace StartAndPark.Application
             var driverExists = await _dbContext.Drivers
                 .AnyAsync(x => x.Id == driverId, cancellationToken);
 
-            if (raceEntry == null || !driverExists) return NotFound();
+            if (racePick == null || !driverExists) return NotFound();
 
-            var existingDriver = raceEntry.RaceEntryDrivers.FirstOrDefault(x => x.DriverId == driverId);
+            var existingDriver = racePick.RacePickDrivers.FirstOrDefault(x => x.DriverId == driverId);
 
             if (existingDriver != null) return Success();
 
-            raceEntry.RaceEntryDrivers.Add(new RaceEntryDriver()
+            racePick.RacePickDrivers.Add(new RacePickDrivers()
             {
-                RaceEntryId = raceEntry.Id,
+                RacePickId = racePick.Id,
                 DriverId = driverId,
             });
 

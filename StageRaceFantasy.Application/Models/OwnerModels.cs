@@ -9,7 +9,7 @@ namespace StartAndPark.Application
     {
         public int Id { get; init; }
         public string Name { get; init; }
-        public List<RaceEntryDto> RaceEntries { get; init; }
+        public List<RacePickDto> RacePicks { get; init; }
     }
 
     public class GetAllOwnersVm : IListVm<OwnerDto>

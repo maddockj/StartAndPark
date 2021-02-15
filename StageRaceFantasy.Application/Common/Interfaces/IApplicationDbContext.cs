@@ -15,9 +15,9 @@ namespace StartAndPark.Application.Common.Interfaces
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         DbSet<Driver> Drivers { get; set; }
         DbSet<Race> Races { get; set; }
-        DbSet<DriverRaceEntry> DriverRaceEntries { get; set; }
+        DbSet<RaceEntry> DriverRaceEntries { get; set; }
         DbSet<Owner> Owners { get; set; }
-        DbSet<RaceEntry> RaceEntries { get; set; }
+        DbSet<RacePick> RacePicks { get; set; }
         DbSet<Track> Tracks { get; set; }
     }
 }

@@ -78,7 +78,7 @@ else
     [Parameter] public int ownerId { get; set; }
     [Parameter] public int raceId { get; set; }
 
-    private GetRaceEntryByIdVm vm;
+    private GetRacePickByIdVm vm;
     private List<DriverSelectionRow> driverSelections;
     private DriverRaceEntryDto[] availableDrivers;
     private int selectedDriverId;
@@ -87,7 +87,7 @@ else
     {
         selectedDriverId = 0;
         driverSelections = null;
-        vm = await httpClient.GetJsonAsync<GetRaceEntryByIdVm>($"api/owners/{ownerId}/race-entries/{raceId}");
+        vm = await httpClient.GetJsonAsync<GetRacePickByIdVm>($"api/owners/{ownerId}/race-entries/{raceId}");
         var allEnteredDrivers = await httpClient.GetJsonAsync<GetAllDriverRaceEntriesVm>($"api/races/{raceId}/entries");
 
         availableDrivers = allEnteredDrivers.ItemList.Where(x => !vm.Drivers.Any(r => r.Id == x.DriverId)).ToArray();

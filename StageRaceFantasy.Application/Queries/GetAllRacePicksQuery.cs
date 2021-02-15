@@ -10,23 +10,23 @@ using System.Threading.Tasks;
 
 namespace StartAndPark.Application
 {
-    public record GetAllRaceEntriesQuery(int TeamId)
-        : IApplicationQuery<GetAllRaceEntriesVm>
+    public record GetAllRacePicksQuery(int TeamId)
+        : IApplicationQuery<GetAllRacePicksVm>
     {
     }
-    public class GetAllRaceEntriesHandler : ApplicationRequestHandler<GetAllRaceEntriesQuery, GetAllRaceEntriesVm>
+    public class GetAllRacePicksHandler : ApplicationRequestHandler<GetAllRacePicksQuery, GetAllRacePicksVm>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public GetAllRaceEntriesHandler(IApplicationDbContext dbContext, IMapper mapper)
+        public GetAllRacePicksHandler(IApplicationDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
         }
 
-        public override async Task<ApplicationRequestResult<GetAllRaceEntriesVm>> Handle(
-            GetAllRaceEntriesQuery request,
+        public override async Task<ApplicationRequestResult<GetAllRacePicksVm>> Handle(
+            GetAllRacePicksQuery request,
             CancellationToken cancellationToken)
         {
             var ownerId = request.TeamId;
@@ -35,15 +35,15 @@ namespace StartAndPark.Application
 
             if (!ownerExists) return NotFound();
 
-            var entries = await _dbContext.RaceEntries
+            var racePicks = await _dbContext.RacePicks
                 .Where(x => x.OwnerId == ownerId)
                 .OrderBy(x => x.Race.Name)
-                .ProjectTo<RaceEntryDto>(_mapper.ConfigurationProvider)
+                .ProjectTo<RacePickDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken: cancellationToken);
 
-            return Success(new GetAllRaceEntriesVm()
+            return Success(new GetAllRacePicksVm()
             {
-                Entries = entries,
+                Picks = racePicks,
             });
         }
     }

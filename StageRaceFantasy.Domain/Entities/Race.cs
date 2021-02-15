@@ -30,11 +30,11 @@ namespace StartAndPark.Domain.Entities
 
         public bool IsComplete => WinningDriverId.HasValue;
 
-        public List<DriverRaceEntry> DriverEntries { get; set; }
+        public List<RaceEntry> DriverEntries { get; set; }
 
         public Race()
         {
-            DriverEntries = new List<DriverRaceEntry>();
+            DriverEntries = new List<RaceEntry>();
         }
     }
 }

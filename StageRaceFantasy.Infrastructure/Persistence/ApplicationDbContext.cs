@@ -10,9 +10,9 @@ namespace StartAndPark.Infrastructure.Persistence
     {
         public DbSet<Driver> Drivers { get; set; }
         public DbSet<Race> Races { get; set; }
-        public DbSet<DriverRaceEntry> DriverRaceEntries { get; set; }
+        public DbSet<RaceEntry> DriverRaceEntries { get; set; }
         public DbSet<Owner> Owners { get; set; }
-        public DbSet<RaceEntry> RaceEntries { get; set; }
+        public DbSet<RacePick> RacePicks { get; set; }
         public DbSet<Track> Tracks { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :
@@ -21,23 +21,23 @@ namespace StartAndPark.Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<DriverRaceEntry>()
+            modelBuilder.Entity<RaceEntry>()
                 .HasKey(x => new { x.RaceId, x.DriverId });
 
-            modelBuilder.Entity<RaceEntry>()
+            modelBuilder.Entity<RacePick>()
                 .HasAlternateKey(x => new { x.OwnerId, x.RaceId });
 
-            modelBuilder.Entity<RaceEntryDriver>()
-                .HasKey(x => new { x.RaceEntryId, x.DriverId });
+            modelBuilder.Entity<RacePickDrivers>()
+                .HasKey(x => new { x.RacePickId, x.DriverId });
 
-            modelBuilder.Entity<RaceEntryDriver>()
-                .HasOne(x => x.RaceEntry)
-                .WithMany(x => x.RaceEntryDrivers)
-                .HasForeignKey(x => x.RaceEntryId);
+            modelBuilder.Entity<RacePickDrivers>()
+                .HasOne(x => x.RacePick)
+                .WithMany(x => x.RacePickDrivers)
+                .HasForeignKey(x => x.RacePickId);
 
-            modelBuilder.Entity<RaceEntryDriver>()
+            modelBuilder.Entity<RacePickDrivers>()
                 .HasOne(x => x.Driver)
-                .WithMany(x => x.RaceEntryDrivers)
+                .WithMany(x => x.RacePickDrivers)
                 .HasForeignKey(x => x.DriverId);
         }
 

@@ -41,7 +41,7 @@ namespace StartAndPark.Application
 
             if (!raceExists || !driverExists) return NotFound();
 
-            var driverRaceEntry = new DriverRaceEntry()
+            var driverRaceEntry = new RaceEntry()
             {
                 RaceId = raceId,
                 DriverId = driverId,

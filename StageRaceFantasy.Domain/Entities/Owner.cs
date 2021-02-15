@@ -7,6 +7,6 @@ namespace StartAndPark.Domain.Entities
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public List<RaceEntry> RaceEntries { get; set; }
+        public List<RacePick> RacePicks { get; set; }
     }
 }

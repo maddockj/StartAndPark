@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace StartAndPark.Application
 {
-    public record GetRaceEntryByIdQuery(int OwnerId, int RaceId)
-        : IApplicationQuery<GetRaceEntryByIdVm>
+    public record GetRacePicksByIdQuery(int OwnerId, int RaceId)
+        : IApplicationQuery<GetRacePickByIdVm>
     {
     }
 
-    public class GetaceEntryByIdHandler : ApplicationRequestHandler<GetRaceEntryByIdQuery, GetRaceEntryByIdVm>
+    public class GetaceEntryByIdHandler : ApplicationRequestHandler<GetRacePicksByIdQuery, GetRacePickByIdVm>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -23,14 +23,14 @@ namespace StartAndPark.Application
             _mapper = mapper;
         }
 
-        public override async Task<ApplicationRequestResult<GetRaceEntryByIdVm>> Handle(GetRaceEntryByIdQuery request,
+        public override async Task<ApplicationRequestResult<GetRacePickByIdVm>> Handle(GetRacePicksByIdQuery request,
                                                                                                    CancellationToken cancellationToken)
         {
             var ownerId = request.OwnerId;
             var raceId = request.RaceId;
 
-            var entry = await _dbContext.RaceEntries
-                .Include(x => x.RaceEntryDrivers)
+            var entry = await _dbContext.RacePicks
+                .Include(x => x.RacePickDrivers)
                     .ThenInclude(x => x.Driver)
                 .Include(x => x.Race)
                 .FirstOrDefaultAsync(
@@ -39,7 +39,7 @@ namespace StartAndPark.Application
 
             if (entry == null) return NotFound();
 
-            var result = _mapper.Map<GetRaceEntryByIdVm>(entry);
+            var result = _mapper.Map<GetRacePickByIdVm>(entry);
 
             var race = await _dbContext.Races.FindAsync(new object[]{ raceId }, cancellationToken);
 
