@@ -12,10 +12,12 @@ namespace StartAndPark.Infrastructure.Persistence.Migrations
                 newName: "RacePickId");
 
             migrationBuilder.RenameTable(
-                name: "RaceEntryDriver", newName: "RacePickDrivers");
+                name: "RaceEntryDriver", 
+                newName: "RacePickDrivers");
 
             migrationBuilder.RenameIndex(
                 name: "IX_RaceEntryDriver_DriverId",
+                table: "RacePickDrivers",
                 newName: "IX_RacePickDrivers_DriverId");
         }
 

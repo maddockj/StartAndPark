@@ -1,0 +1,154 @@
+﻿@using BlazorTable
+@using StartAndPark.Client.Components.Forms
+@using StartAndPark.Client.Models
+@using StartAndPark.Domain
+@using StartAndPark.Application
+
+@inject HttpClient httpClient
+@inject IMatToaster toaster
+@inject IJSRuntime js
+
+<h1>@_race?.Name</h1>
+<h3>Owner Picks</h3>
+
+<div class="container-fluid">
+    <EditForm Model="@this">
+        <Table TableItem="Owner" Items="@_owners" PageSize="100">
+            <Column TableItem="Owner" Title="Owner" Field="@(x => x.Name)" />
+            @foreach (var tier in Tier.TIERS)
+            {
+                <Column TableItem="Owner" Title="@tier">
+                    <Template Context="owner">
+                        <select value="@GetEntryId(owner, tier)"
+                                @onchange="e => PickChanged(owner, tier, e)"
+                                class="form-control form-control-sm">
+                            <option></option>
+                            @foreach (var entry in GetEntries(tier))
+                            {
+                                <option value="@entry.Id">@($"{entry.CarNumber} - {entry.Name}")</option>
+                            }
+                        </select>
+                    </Template>
+                </Column>
+            }
+        </Table>
+    </EditForm>
+
+    <ActionButton Action="add" ButtonText="Owner" OnClick="@(_ => AddOwner())" MinimizePadding="false" />
+</div>
+
+@code {
+    [Parameter]
+    public int RaceId { get; set; }
+
+    private Race _race;
+
+    private List<Owner> _owners;
+
+    private Dictionary<string, List<DriverRaceEntryDto>> _entries;
+
+    private Dictionary<int, RacePick> _picks;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadItems();
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task LoadItems()
+    {
+        _race = await httpClient.GetFromJsonAsync<Race>($"api/races/{RaceId}");
+
+        await LoadOwners();
+
+        var entries = await httpClient.GetFromJsonAsync<List<DriverRaceEntryDto>>($"api/races/{RaceId}/entries2");
+        _entries = entries.Where(x => x.Tier != null).GroupBy(x => x.Tier).ToDictionary(g => g.Key, g => g.ToList());
+
+        var picks = await httpClient.GetFromJsonAsync<List<RacePick>>($"api/races/{RaceId}/picks");
+        _picks = picks.ToDictionary(x => x.OwnerId);
+
+
+    }
+
+    private async Task LoadOwners()
+    {
+        _owners = await httpClient.GetFromJsonAsync<List<Owner>>("api/owners");
+    }
+
+    private async Task AddOwner()
+    {
+        string name = await js.InvokeAsync<string>("prompt", "New owner name");
+
+        if (string.IsNullOrEmpty(name))
+        {
+            toaster.Add("Empty Name", MatToastType.Danger);
+            return;
+        }
+
+        if (_owners.Any(x => name.Equals(x.Name)))
+        {
+            toaster.Add("Duplicate Name", MatToastType.Danger);
+            return;
+        }
+
+        var response = await httpClient.PostAsJsonAsync("api/owners", new OwnerDto
+        {
+            Name = name
+        });
+
+        if (!response.IsSuccessStatusCode)
+        {
+            toaster.Add("Save Failed", MatToastType.Danger);
+            StateHasChanged();
+        }
+        else
+        {
+            toaster.Add($"Added {name}", MatToastType.Success);
+            var newOwner = await response.Content.ReadFromJsonAsync<Owner>();
+            _owners.Add(newOwner);
+        }
+    }
+
+    private Owner GetOwner(int id)
+    {
+        return _owners?.Where(o => o.Id == id)?.FirstOrDefault();
+    }
+
+    private IEnumerable<DriverRaceEntryDto> GetEntries(string tier)
+    {
+        List<DriverRaceEntryDto> retList = new List<DriverRaceEntryDto>();
+        int idx = Tier.TIERS.IndexOf(tier);
+        var validTiers = Tier.TIERS.Where(t => Tier.TIERS.IndexOf(t) >= idx);
+        _entries.Where(x => validTiers.Contains(x.Key)).OrderBy(x => x.Key).ToList()
+            .ForEach(x => retList.AddRange(x.Value.OrderBy(e => Convert.ToInt32(e.CarNumber))));
+        return retList;
+    }
+
+    private int? GetEntryId(Owner o, string tier)
+    {
+        var pick = _picks.ContainsKey(o.Id) ? _picks[o.Id] : null;
+        var entry = pick?.RaceEntries?.Where(x => x.Tier == tier)?.FirstOrDefault();
+        return entry?.Id;
+    }
+
+    private async Task PickChanged(Owner o, string tier, ChangeEventArgs e)
+    {
+        int? entryId = int.TryParse(e.Value.ToString(), out int i) ? (int?)i : null;
+
+        var cmd = new SetRacePickCommand(o.Id, RaceId, tier, entryId);
+
+        //toaster.Add($"SetRacePickCommand {e.Value.GetType().Name} {e.Value} should equal {entryId}", MatToastType.Info);
+
+        var response = await httpClient.PutAsJsonAsync($"api/owners/{o.Id}/picks", cmd);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            toaster.Add($"Update Failed for {o.Name} tier {tier} entry {entryId}", MatToastType.Danger);
+        }
+        else
+        {
+            toaster.Add($"Saved Pick", MatToastType.Success);
+        }
+    }
+} 

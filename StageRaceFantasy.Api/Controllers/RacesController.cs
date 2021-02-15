@@ -8,6 +8,7 @@ using StartAndPark.Application.Common.Interfaces;
 using StartAndPark.Application;
 using StartAndPark.Domain.Entities;
 using StartAndPark.Server.Controllers.Utils;
+using StartAndPark.Client;
 
 namespace StartAndPark.Server.Controllers
 {
@@ -41,12 +42,13 @@ namespace StartAndPark.Server.Controllers
         [HttpGet("{id}/entries2")]
         public async Task<ActionResult<IEnumerable<DriverRaceEntryDto>>> GetEntries(int id)
         {
-            return await _context.DriverRaceEntries
+            return await _context.RaceEntries
                 .Include(x => x.Race)
                 .Include(x => x.Driver)
                 .Where(x => x.RaceId == id)
                 .Select(x => new DriverRaceEntryDto
                 {
+                    Id = x.Id,
                     RaceId = x.RaceId,
                     NascarRaceId = x.Race.NascarId,
                     DriverId = x.DriverId,
@@ -70,6 +72,35 @@ namespace StartAndPark.Server.Controllers
             }
 
             return race;
+        }
+
+        // GET: api/Races/current
+        [HttpGet("current")]
+        public async Task<ActionResult<Race>> GetCurrentRace()
+        {
+            var race = await _context.Races
+                .Where(x => x.Type == Constants.RACE_TYPE_POINTS)
+                .Where(x => !x.WinningDriverId.HasValue)
+                .OrderBy(x => x.StartTime)
+                .FirstOrDefaultAsync();
+
+            if (race == null)
+            {
+                return NotFound();
+            }
+
+            return race;
+        }
+
+        // GET: api/races/{id}/picks
+        [HttpGet("{id}/picks")]
+        public async Task<ActionResult<List<RacePick>>> GetRacePicks(int id)
+        {
+            return await _context.RacePicks
+                .Include(x => x.RaceEntries)
+                .ThenInclude(e => e.Driver)
+                .Where(x => x.RaceId == id)
+                .ToListAsync();
         }
 
         // PUT: api/Races/5

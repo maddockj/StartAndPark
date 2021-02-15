@@ -49,7 +49,7 @@ else
             <td>@context.RaceId</td>
             <td>@context.RaceName</td>
             <td>
-                <MatButton Link="@($"/owners/{ownerId}/race-entries/{context.RaceId}")">View</MatButton>
+                <MatButton Link="@($"/owners/{ownerId}/picks/{context.RaceId}")">View</MatButton>
             </td>
         </MatTableRow>
         </MatTable>
@@ -75,7 +75,7 @@ else
     {
         var raceEntry = new CreateRacePickCommand(ownerId, selectedRaceId);
 
-        await httpClient.PostAsJsonAsync($"api/owners/{ownerId}/race-entries", raceEntry);
+        await httpClient.PostAsJsonAsync($"api/owners/{ownerId}/picks", raceEntry);
 
         await OnInitializedAsync();
     }

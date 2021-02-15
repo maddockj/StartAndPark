@@ -3,36 +3,23 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StartAndPark.Infrastructure.Persistence;
 
 namespace StartAndPark.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210215054408_PickTiers")]
+    partial class PickTiers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.3")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("RaceEntryRacePick", b =>
-                {
-                    b.Property<int>("RaceEntriesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RacePicksId")
-                        .HasColumnType("int");
-
-                    b.HasKey("RaceEntriesId", "RacePicksId");
-
-                    b.HasIndex("RacePicksId");
-
-                    b.ToTable("RaceEntryRacePick");
-                });
 
             modelBuilder.Entity("StartAndPark.Domain.Entities.Driver", b =>
                 {
@@ -105,30 +92,31 @@ namespace StartAndPark.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("StartAndPark.Domain.Entities.RaceEntry", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CarNumber")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("RaceId")
+                        .HasColumnType("int");
 
                     b.Property<int>("DriverId")
                         .HasColumnType("int");
 
-                    b.Property<int>("RaceId")
+                    b.Property<string>("CarNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RacePickId")
                         .HasColumnType("int");
 
                     b.Property<string>("Tier")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
-
-                    b.HasAlternateKey("RaceId", "DriverId");
+                    b.HasKey("RaceId", "DriverId");
 
                     b.HasIndex("DriverId");
 
-                    b.ToTable("RaceEntries");
+                    b.HasIndex("RacePickId");
+
+                    b.ToTable("DriverRaceEntries");
                 });
 
             modelBuilder.Entity("StartAndPark.Domain.Entities.RacePick", b =>
@@ -181,21 +169,6 @@ namespace StartAndPark.Infrastructure.Persistence.Migrations
                     b.ToTable("Tracks");
                 });
 
-            modelBuilder.Entity("RaceEntryRacePick", b =>
-                {
-                    b.HasOne("StartAndPark.Domain.Entities.RaceEntry", null)
-                        .WithMany()
-                        .HasForeignKey("RaceEntriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StartAndPark.Domain.Entities.RacePick", null)
-                        .WithMany()
-                        .HasForeignKey("RacePicksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("StartAndPark.Domain.Entities.Race", b =>
                 {
                     b.HasOne("StartAndPark.Domain.Entities.Track", "Track")
@@ -226,6 +199,10 @@ namespace StartAndPark.Infrastructure.Persistence.Migrations
                         .HasForeignKey("RaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("StartAndPark.Domain.Entities.RacePick", null)
+                        .WithMany("RacePickEntries")
+                        .HasForeignKey("RacePickId");
 
                     b.Navigation("Driver");
 
@@ -259,6 +236,11 @@ namespace StartAndPark.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("StartAndPark.Domain.Entities.Race", b =>
                 {
                     b.Navigation("DriverEntries");
+                });
+
+            modelBuilder.Entity("StartAndPark.Domain.Entities.RacePick", b =>
+                {
+                    b.Navigation("RacePickEntries");
                 });
 
             modelBuilder.Entity("StartAndPark.Domain.Entities.Track", b =>

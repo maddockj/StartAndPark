@@ -25,7 +25,7 @@ namespace StartAndPark.Application
             var raceId = request.RaceId;
             var driverId = request.DriverId;
 
-            var driverRaceEntry = await _dbContext.DriverRaceEntries
+            var driverRaceEntry = await _dbContext.RaceEntries
                 .FindAsync(new object[] { raceId, driverId }, cancellationToken: cancellationToken);
 
             if (driverRaceEntry == null) return NotFound();

@@ -13,7 +13,5 @@ namespace StartAndPark.Domain.Entities
 
         [Required]
         public string Name { get; set; }
-
-        public List<RacePickDrivers> RacePickDrivers { get; set; }
     }
 }

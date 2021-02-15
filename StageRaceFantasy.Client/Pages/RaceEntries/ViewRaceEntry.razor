@@ -1,4 +1,4 @@
-﻿@page "/owners/{ownerId:int}/race-entries/{raceId:int}"
+﻿@page "/owners/{ownerId:int}/picks/{raceId:int}"
 
 @using StartAndPark.Application
 
@@ -87,7 +87,7 @@ else
     {
         selectedDriverId = 0;
         driverSelections = null;
-        vm = await httpClient.GetJsonAsync<GetRacePickByIdVm>($"api/owners/{ownerId}/race-entries/{raceId}");
+        vm = await httpClient.GetJsonAsync<GetRacePickByIdVm>($"api/owners/{ownerId}/picks/{raceId}");
         var allEnteredDrivers = await httpClient.GetJsonAsync<GetAllDriverRaceEntriesVm>($"api/races/{raceId}/entries");
 
         availableDrivers = allEnteredDrivers.ItemList.Where(x => !vm.Drivers.Any(r => r.Id == x.DriverId)).ToArray();
@@ -104,13 +104,13 @@ else
 
     private async Task AddDriver()
     {
-        await httpClient.PostAsync($"api/owners/{ownerId}/race-entries/{raceId}/drivers/{selectedDriverId}", new StringContent(""));
+        await httpClient.PostAsync($"api/owners/{ownerId}/picks/{raceId}/drivers/{selectedDriverId}", new StringContent(""));
         await OnInitializedAsync();
     }
 
     private async Task RemoveDriver(int driverId)
     {
-        await httpClient.DeleteAsync($"api/owners/{ownerId}/race-entries/{raceId}/drivers/{driverId}");
+        await httpClient.DeleteAsync($"api/owners/{ownerId}/picks/{raceId}/drivers/{driverId}");
         await OnInitializedAsync();
     }
 }

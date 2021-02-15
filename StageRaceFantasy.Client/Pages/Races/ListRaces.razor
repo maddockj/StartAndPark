@@ -21,6 +21,12 @@
                         Items="@_savedRaces"
                         RowClickAction="x => ShowEntries(x)">
 
+        <ActionButtonColumn TableItem="RaceDto" ButtonText="Picks" OnClick="@ShowPicks" 
+                            DoHide="@(x => x.Type == RACE_TYPE_NONPOINTS)" />
+
+        <ActionButtonColumn TableItem="RaceDto" ButtonText="Entries" OnClick="@ShowEntries" 
+                            DoHide="@(x => x.Type == RACE_TYPE_NONPOINTS)" />
+        
         <Column TableItem="RaceDto" Title="Name" Field="@(x => x.Name)" Sortable="true">
             <Template>
                 <span class="@GetNameClass(context)">@context.Name</span>
@@ -47,14 +53,20 @@ else
     <ActionButton ButtonText="Back to List" OnClick="@(_ => ClearSelectedRace())" 
                   MinimizePadding="false" CssClass="float-right" />
 
-    <CascadingValue Value="this">
+    @if ("entries".Equals(_mode))
+    {
         <RaceEntries RaceId="_race.Id" />
-    </CascadingValue>
+    }
+    else if ("picks".Equals(_mode))
+    {
+        <Picks RaceId="_race.Id" />
+    }
 }
 
 @code {
     private RaceDto _race;
 
+    private string _mode;
 
     private Tracks.ListTracks _trackListPage;
     private List<Track> _savedTracks;
@@ -158,10 +170,21 @@ else
         _race = null;
     }
 
-    private void ShowEntries(RaceDto race)
+    private void SetMode(RaceDto race, string mode)
     {
         if (race.Type == Constants.RACE_TYPE_NONPOINTS) return;
         _race = race;
+        _mode = mode;
         StateHasChanged();
+    }
+
+    private void ShowEntries(RaceDto race)
+    {
+        SetMode(race, "entries");
+    }
+
+    private void ShowPicks(RaceDto race)
+    {
+        SetMode(race, "picks");
     }
 }

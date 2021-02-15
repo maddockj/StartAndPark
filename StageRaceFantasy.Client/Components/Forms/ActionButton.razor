@@ -89,7 +89,7 @@
     protected void SetAction(string action)
     {
         // set fields based on the given action type
-        switch (action.ToUpper())
+        switch (action?.ToUpper())
         {
             case "ADD":
                 _cssType = "success";

@@ -34,7 +34,7 @@ namespace StartAndPark.Application
 
             if (!raceExists) return NotFound();
 
-            var driverRaceEntries = await _dbContext.DriverRaceEntries
+            var driverRaceEntries = await _dbContext.RaceEntries
                 .AsNoTracking()
                 .Include(x => x.Race)
                 .Include(x => x.Driver)

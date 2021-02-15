@@ -1,5 +1,52 @@
 ﻿@page "/"
 
-<MatHeadline1>Start and Park</MatHeadline1>
+@using StartAndPark.Client.Models
+@using StartAndPark.Client.Components.Forms
 
-<MatHeadline4>Welcome to your doom</MatHeadline4>
+@inject HttpClient httpClient
+@inject IMatToaster toaster
+
+@if (_liveRace != null)
+{
+    <h2>Live Race: @_liveRace.run_name</h2>
+    @foreach (var vehicle in _liveRace.vehicles.OrderBy(v => v.running_position))
+    {
+        <InputGroup Label="@vehicle.vehicle_number" Colspan="4">
+            <div class="form-control form-control-sm">@vehicle.driver.full_name</div>
+        </InputGroup>
+    }
+}
+else if (_currentRace != null)
+{
+    <h2>Current Race: @_currentRace.Name</h2>
+}
+
+@code {
+    private Race _currentRace;
+
+    private NascarLiveRace _liveRace;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await LoadItems();
+        }
+        catch (Exception e)
+        {
+            toaster.Add(e.Message, MatToastType.Danger);
+            throw;
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+    public async Task LoadItems()
+    {
+        _currentRace = await httpClient.GetFromJsonAsync<Race>("api/races/current");
+
+        var liveRaceUrl = $"https://www.nascar.com/live/feeds/series_1/{_currentRace.NascarId}/live_feed.json";
+        _liveRace = await httpClient.GetFromJsonAsync<NascarLiveRace>(liveRaceUrl);
+    }
+
+}

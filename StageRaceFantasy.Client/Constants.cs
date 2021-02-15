@@ -12,5 +12,8 @@ namespace StartAndPark.Client
 
         public const int RACE_TYPE_POINTS = 1;
         public const int RACE_TYPE_NONPOINTS = 2;
+
+        public const int FLAG_STATE_GREEN = 1;
+        public const int FLAG_STATE_YELLOW = 2;
     }
 }

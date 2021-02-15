@@ -26,6 +26,9 @@
         }
     }
 
+    [Parameter]
+    public string ButtonText { get; set; }
+
     /// <summary>
     /// Something to do when the button gets clicked
     /// </summary>
@@ -37,6 +40,9 @@
     /// </summary>
     [Parameter]
     public bool StopPropagationOnClick { get; set; } = true;
+
+    [Parameter]
+    public Func<TableItem, bool> DoHide { get; set; } = x => false;
 
 
     protected override void OnInitialized()
@@ -51,7 +57,13 @@
         // and all we need to do is override how the cell contents are built.
         Template = item => __builder =>
         {
-        <ActionButton Action="@Action" OnClick="e => OnClick.InvokeAsync(item)" StopPropagationOnClick="@StopPropagationOnClick" />
+            @if (!DoHide(item))
+            {
+                <ActionButton Action="@Action" 
+                              ButtonText="@ButtonText"
+                              OnClick="e => OnClick.InvokeAsync(item)" 
+                              StopPropagationOnClick="@StopPropagationOnClick" />
+            }
         };
 
         base.OnInitialized();

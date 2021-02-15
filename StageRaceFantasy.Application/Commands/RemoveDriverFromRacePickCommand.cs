@@ -29,18 +29,18 @@ namespace StartAndPark.Application
             var driverId = request.DriverId;
 
             var racePick = await _dbContext.RacePicks
-                .Include(x => x.RacePickDrivers)
+                .Include(x => x.RaceEntries)
                 .FirstOrDefaultAsync(
                     x => x.OwnerId == ownerId && x.RaceId == raceId,
                     cancellationToken);
 
             if (racePick == null) return NotFound();
 
-            var driver = racePick.RacePickDrivers.FirstOrDefault(x => x.DriverId == driverId);
+            var driver = racePick.RaceEntries.FirstOrDefault(x => x.DriverId == driverId);
 
             if (driver == null) return Success();
 
-            racePick.RacePickDrivers.Remove(driver);
+            racePick.RaceEntries.Remove(driver);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Success();

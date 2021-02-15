@@ -1,10 +1,93 @@
 ﻿@page "/owners"
 
+@using BlazorTable
 @using StartAndPark.Application
 @using StartAndPark.Client.Components
+@using StartAndPark.Client.Components.Forms
 
-<ManagementListPage TItem="OwnerDto"
+@inject HttpClient httpClient
+@inject IMatToaster toaster
+
+<ManagementListPage TItem="Owner"
                     Title="Owners"
                     IdField="@(x => x.Id)"
                     NameField="@(x => x.Name)"
-                    ManagePath="owners"/>
+                    ManagePath="owners"
+                    Items="_owners"
+                    DoDelete="true">
+
+    <Column TableItem="Owner" Title="Name" Field="@(x => x.Name)" Sortable="true" DefaultSortColumn="true">
+        <Template>
+            <InputText @bind-Value="@context.Name" @onfocusout="x => Save(context)" class="form-control form-control-sm" />
+        </Template>
+    </Column>
+
+</ManagementListPage>
+
+<ActionButton Action="add" ButtonText="Owner" OnClick="@(_ => AddNew())" MinimizePadding="false" />
+
+
+@code {
+    private List<Owner> _owners;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadItems();
+
+        await base.OnInitializedAsync();
+    }
+
+    public async Task LoadItems()
+    {
+        try
+        {
+            _owners = await httpClient.GetFromJsonAsync<List<Owner>>("api/owners");
+        }
+        catch (Exception e)
+        {
+            toaster.Add(e.Message, MatToastType.Danger);
+            throw;
+        }
+    }
+
+    private void AddNew()
+    {
+        _owners.Add(new Owner());
+        StateHasChanged();
+    }
+
+    private async Task Save(Owner o)
+    {
+        if (String.IsNullOrEmpty(o.Name)) return;
+
+        var dto = new OwnerDto
+        {
+            Id = o.Id,
+            Name = o.Name
+        };
+
+        HttpResponseMessage response;
+        if (dto.Id == 0)
+        {
+            response = await httpClient.PostAsJsonAsync($"api/owners", dto);
+        }
+        else
+        {
+            response = await httpClient.PutAsJsonAsync($"api/owners/{dto.Id}", dto);
+        }
+
+        if (!response.IsSuccessStatusCode)
+        {
+            toaster.Add("Save Failed", MatToastType.Danger);
+            StateHasChanged();
+        }
+        else
+        {
+            toaster.Add($"Saved {dto.Name}", MatToastType.Success);
+            if (dto.Id == 0)
+            {
+                o = await response.Content.ReadFromJsonAsync<Owner>();
+            }
+        }
+    }
+}

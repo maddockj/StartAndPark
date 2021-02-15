@@ -30,7 +30,7 @@ namespace StartAndPark.Application
             var raceId = request.RaceId;
 
             var entry = await _dbContext.RacePicks
-                .Include(x => x.RacePickDrivers)
+                .Include(x => x.RaceEntries)
                     .ThenInclude(x => x.Driver)
                 .Include(x => x.Race)
                 .FirstOrDefaultAsync(

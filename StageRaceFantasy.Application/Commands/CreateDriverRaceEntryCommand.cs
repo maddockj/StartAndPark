@@ -31,7 +31,7 @@ namespace StartAndPark.Application
             var carNum = request.CarNumber;
             var tier = request.Tier;
 
-            var raceEntryExists = await _dbContext.DriverRaceEntries
+            var raceEntryExists = await _dbContext.RaceEntries
                 .AnyAsync(x => x.RaceId == raceId && x.DriverId == driverId, cancellationToken);
 
             if (raceEntryExists) return BadRequest();
@@ -49,7 +49,7 @@ namespace StartAndPark.Application
                 Tier = tier
             };
 
-            await _dbContext.DriverRaceEntries.AddAsync(driverRaceEntry, cancellationToken);
+            await _dbContext.RaceEntries.AddAsync(driverRaceEntry, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Success();

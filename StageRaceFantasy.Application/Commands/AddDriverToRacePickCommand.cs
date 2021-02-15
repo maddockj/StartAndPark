@@ -30,25 +30,25 @@ namespace StartAndPark.Application
             var driverId = request.DriverId;
 
             var racePick = await _dbContext.RacePicks
-                .Include(x => x.RacePickDrivers)
+                .Include(x => x.RaceEntries)
                 .FirstOrDefaultAsync(
                     x => x.OwnerId == ownerId && x.RaceId == raceId,
                     cancellationToken);
 
-            var driverExists = await _dbContext.Drivers
-                .AnyAsync(x => x.Id == driverId, cancellationToken);
+            var raceEntry = await _dbContext.RaceEntries
+                .Where(x => x.RaceId == raceId && x.DriverId == driverId)
+                .FirstOrDefaultAsync();
 
-            if (racePick == null || !driverExists) return NotFound();
+            //var driverExists = await _dbContext.Drivers
+            //    .AnyAsync(x => x.Id == driverId, cancellationToken);
 
-            var existingDriver = racePick.RacePickDrivers.FirstOrDefault(x => x.DriverId == driverId);
+            if (racePick == null || raceEntry == null) return NotFound();
 
-            if (existingDriver != null) return Success();
+            //var existingDriver = racePick.RacePickEntries.FirstOrDefault(x => x.DriverId == driverId);
 
-            racePick.RacePickDrivers.Add(new RacePickDrivers()
-            {
-                RacePickId = racePick.Id,
-                DriverId = driverId,
-            });
+            //if (existingDriver != null) return Success();
+
+            racePick.RaceEntries.Add(raceEntry);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 

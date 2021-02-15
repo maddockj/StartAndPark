@@ -11,14 +11,11 @@ namespace StartAndPark.Domain.Entities
         public Owner Owner { get; set; }
         public int RaceId { get; set; }
         public Race Race { get; set; }
-        public List<RacePickDrivers> RacePickDrivers { get; set; }
-
-        [NotMapped]
-        public List<Driver> Drivers => RacePickDrivers.Select(x => x.Driver).ToList();
+        public List<RaceEntry> RaceEntries { get; set; }
 
         public RacePick()
         {
-            RacePickDrivers = new List<RacePickDrivers>();
+            RaceEntries = new List<RaceEntry>();
         }
     }
 }

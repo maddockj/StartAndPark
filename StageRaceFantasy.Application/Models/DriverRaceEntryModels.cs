@@ -13,6 +13,7 @@ namespace StartAndPark.Application
 
     public class DriverRaceEntryDto : IMapFrom
     {
+        public int Id { get; set; }
         public int RaceId { get; set; }
         public int NascarRaceId { get; set; }
         public int DriverId { get; set; }
@@ -38,6 +39,7 @@ namespace StartAndPark.Application
 
     public class CreateDriverRaceEntryDto : IMapFrom<RaceEntry>
     {
+        public int Id { get; set; }
         public int RaceId { get; set; }
         public int DriverId { get; set; }
         public string CarNumber { get; set; }

@@ -21,29 +21,33 @@
 {
     <Loader />
 }
+else
+{
+    <EditForm Model="@Items">
+        <div class="table-selectable">
+            <Table TableItem="TItem" Items="@Items" PageSize="@PageSize" ShowSearchBar="false"
+                   RowClickAction="@(RowClickAction ?? Edit)">
+                @*<Column TableItem="TItem" Title="Id" Field="@IdField" Width="5%" />*@
 
-<div class="table-selectable">
-    <Table TableItem="TItem" Items="@Items" PageSize="@PageSize" ShowSearchBar="false" 
-           RowClickAction="@(RowClickAction ?? Edit)">
-        @*<Column TableItem="TItem" Title="Id" Field="@IdField" Width="5%" />*@
+                @if (DoEdit)
+                {
+                    <ActionButtonColumn TableItem="TItem" Action="edit" OnClick="@Edit" />
+                }
 
-        @if (DoEdit)
-        {
-            <ActionButtonColumn TableItem="TItem" Action="edit" OnClick="@Edit" />
-        }
+                @if (DoDelete)
+                {
+                    <ActionButtonColumn TableItem="TItem" Action="delete" OnClick="@Delete" />
+                }
 
-        @if (DoDelete)
-        {
-            <ActionButtonColumn TableItem="TItem" Action="delete" OnClick="@Delete" />
-        }
+                @ChildContent
 
-        @ChildContent
+                <Pager ShowPageNumber="true" ShowTotalCount="true" />
 
-        <Pager ShowPageNumber="true" ShowTotalCount="true" />
-
-        <EmptyDataTemplate><div class="text-center">@($"none found")</div></EmptyDataTemplate>
-    </Table>
-</div>
+                <EmptyDataTemplate><div class="text-center">@($"none found")</div></EmptyDataTemplate>
+            </Table>
+        </div>
+    </EditForm>
+}
 
 @code {
     [Parameter]
@@ -149,7 +153,7 @@
     // put together the right navigation path for editing the given item ID
     private string GetEditorPath(int? id)
     {
-        return $"/{ManagePath.Trim()}/{(id.HasValue ? id : 0)}";
+        return $"{ManagePath.Trim()}/{(id.HasValue ? id : 0)}";
     }
 
     private int GetItemId(TItem item)

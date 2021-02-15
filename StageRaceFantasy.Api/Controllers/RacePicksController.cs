@@ -7,7 +7,7 @@ using StartAndPark.Server.Controllers.Utils;
 
 namespace StartAndPark.Server.Controllers
 {
-    [Route("api/owners/{ownerId}/race-entries")]
+    [Route("api/owners/{ownerId}/picks")]
     [ApiController]
     public class RacePicksController : ControllerBase
     {
@@ -44,6 +44,16 @@ namespace StartAndPark.Server.Controllers
             var result = await _mediator.Send(command);
 
             return ResponseHelpers.BuildStatusCodeResponse(this, result, 201);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<RacePick>> SetRacePick(int ownerId, SetRacePickCommand command)
+        {
+            if (command.OwnerId != ownerId) return BadRequest();
+
+            var result = await _mediator.Send(command);
+
+            return ResponseHelpers.BuildStatusCodeResponse(this, result, 200);
         }
 
         [HttpDelete("{raceId}")]
