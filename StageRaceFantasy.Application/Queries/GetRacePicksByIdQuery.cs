@@ -12,12 +12,12 @@ namespace StartAndPark.Application
     {
     }
 
-    public class GetaceEntryByIdHandler : ApplicationRequestHandler<GetRacePicksByIdQuery, GetRacePickByIdVm>
+    public class GetRacePickByIdHandler : ApplicationRequestHandler<GetRacePicksByIdQuery, GetRacePickByIdVm>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public GetaceEntryByIdHandler(IApplicationDbContext dbContext, IMapper mapper)
+        public GetRacePickByIdHandler(IApplicationDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
