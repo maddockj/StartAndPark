@@ -14,9 +14,10 @@ namespace StartAndPark.Application
     public class DriverRaceEntryDto : IMapFrom
     {
         public int RaceId { get; set; }
+        public int NascarRaceId { get; set; }
         public int DriverId { get; set; }
-        public string DriverFirstName { get; set; }
-        public string DriverLastName { get; set; }
+        public int NascarDriverId { get; set; }
+        public string Name { get; set; }
         public bool IsEntered { get; set; }
         public string CarNumber { get; set; }
         public string Tier { get; set; }
@@ -25,10 +26,13 @@ namespace StartAndPark.Application
         {
             profile.CreateMap<DriverRaceEntry, DriverRaceEntryDto>();
 
+            profile.CreateMap<Race, DriverRaceEntryDto>()
+                .ForMember(dest => dest.RaceId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.NascarRaceId, opt => opt.MapFrom(src => src.NascarId));
+
             profile.CreateMap<Driver, DriverRaceEntryDto>()
                 .ForMember(dest => dest.DriverId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.DriverFirstName, opt => opt.MapFrom(src => src.FirstName))
-                .ForMember(dest => dest.DriverLastName, opt => opt.MapFrom(src => src.LastName));
+                .ForMember(dest => dest.NascarDriverId, opt => opt.MapFrom(src => src.NascarId));
         }
     }
 
@@ -36,5 +40,7 @@ namespace StartAndPark.Application
     {
         public int RaceId { get; set; }
         public int DriverId { get; set; }
+        public string CarNumber { get; set; }
+        public string Tier { get; set; }
     }
 }

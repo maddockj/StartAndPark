@@ -38,8 +38,7 @@ else
                 {
                 <td>@context.Index</td>
                 <td>@context.Driver.Id</td>
-                <td>@context.Driver.FirstName</td>
-                <td>@context.Driver.LastName</td>
+                <td>@context.Driver.Name</td>
                 <td>
                     <MatIconButton @onclick="@(() => RemoveDriver(context.Driver.Id))" Icon="delete" Style="color: red" />
                 </td>
@@ -58,7 +57,7 @@ else
             <option disabled="true" value="0">-- Please Select --</option>
             @foreach (var driver in availableDrivers)
             {
-                <option value="@driver.DriverId">@driver.DriverLastName, @driver.DriverFirstName</option>
+                <option value="@driver.DriverId">@driver.Name</option>
             }
         </select>
         <MatButton OnClick="@AddDriver" Disabled="@(selectedDriverId == 0)">Add Driver</MatButton>

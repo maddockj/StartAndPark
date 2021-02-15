@@ -1,16 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace StartAndPark.Domain.Entities
 {
     public class Driver
     {
         public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
 
-        [NotMapped]
-        public string DisplayNameLastFirst => $"{LastName}, {FirstName}";
+        [Required]
+        public int NascarId {get; set; }
+
+        [Required]
+        public string Name { get; set; }
 
         public List<RaceEntryDriver> RaceEntryDrivers { get; set; }
     }

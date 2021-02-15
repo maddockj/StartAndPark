@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StartAndPark.Application
 {
-    public record UpdateDriverRaceEntryCommand(int RaceId, int DriverId, string CarNumber)
+    public record UpdateDriverRaceEntryCommand(int RaceId, int DriverId, string CarNumber, string Tier)
         : IRequest<ApplicationRequestResult>
     {
     }
@@ -31,6 +31,7 @@ namespace StartAndPark.Application
             if (driverRaceEntry == null) return NotFound();
 
             driverRaceEntry.CarNumber = request.CarNumber;
+            driverRaceEntry.Tier = request.Tier;
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 

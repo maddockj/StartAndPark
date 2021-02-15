@@ -1,9 +1,45 @@
 ﻿@page "/drivers"
 
 @using StartAndPark.Client.Components
+@using StartAndPark.Client.Models
+@using BlazorTable;
+
+@inject HttpClient httpClient
+@inject IMatToaster toaster
 
 <ManagementListPage TItem="Driver"
                     Title="Drivers"
                     IdField="@(x => x.Id)"
-                    NameField="@(x => x.DisplayNameLastFirst)"
-                    ManagePath="drivers" />
+                    NameField="@(x => x.Name)"
+                    ManagePath="drivers"
+                    Items="@_savedDrivers">
+
+    <Column TableItem="Driver" Title="Name" Field="@(x => x.Name)" Sortable="true" DefaultSortColumn="true" />
+
+</ManagementListPage>
+
+@code {
+    private List<Driver> _savedDrivers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadItems(httpClient, toaster);
+
+        await base.OnInitializedAsync();
+    }
+
+    public async Task<List<Driver>> LoadItems(HttpClient httpClient, IMatToaster toaster)
+    {
+        try
+        {
+            _savedDrivers = await httpClient.GetFromJsonAsync<List<Driver>>($"api/drivers");
+
+            return _savedDrivers;
+        }
+        catch (Exception e)
+        {
+            toaster.Add(e.Message, MatToastType.Danger);
+            throw;
+        }
+    }
+}

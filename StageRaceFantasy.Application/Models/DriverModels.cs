@@ -6,7 +6,7 @@ namespace StartAndPark.Application
     public class DriverDto : IMapFrom<Driver>
     {
         public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public int NascarId { get; set; }
+        public string Name { get; set; }
     }
 }

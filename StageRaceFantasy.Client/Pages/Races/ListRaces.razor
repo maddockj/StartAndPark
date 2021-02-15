@@ -3,36 +3,165 @@
 @using BlazorTable
 @using StartAndPark.Application
 @using StartAndPark.Client.Components
+@using StartAndPark.Client.Models
+@using StartAndPark.Client.Components.Forms
+@using static StartAndPark.Client.Constants
 
 @inject NavigationManager _navigationManager
+@inject HttpClient httpClient
+@inject IMatToaster toaster
 
-<ManagementListPage TItem="RaceDto"
-                    Title="Races"
-                    IdField="@(x => x.Id)"
-                    NameField="@(x => x.Name)"
-                    ManagePath="races"
-                    RowClickAction="ShowEntries">
+@if (_race == null)
+{
+    <ManagementListPage TItem="RaceDto"
+                        Title="Races"
+                        IdField="@(x => x.Id)"
+                        NameField="@(x => x.Name)"
+                        ManagePath="races"
+                        Items="@_savedRaces"
+                        RowClickAction="x => ShowEntries(x)">
 
-    <Column TableItem="RaceDto" Title="Track" Field="@(x => x.TrackName)" Sortable="true" />
+        <Column TableItem="RaceDto" Title="Name" Field="@(x => x.Name)" Sortable="true">
+            <Template>
+                <span class="@GetNameClass(context)">@context.Name</span>
+            </Template>
+        </Column>
 
-    <Column TableItem="RaceDto" Title="Start Time (Eastern)" Field="@(x => x.StartTime)" Sortable="true" DefaultSortColumn="true" />
+        <Column TableItem="RaceDto" Title="Track" Field="@(x => x.TrackName)" Sortable="true" />
 
-    <Column TableItem="RaceDto" Title="Completed" Field="@(x => x.IsComplete)" Width="3%">
-        <Template>
-            @if (context.IsComplete)
-            {
-                <span class="oi oi-check" />
-            }
-        </Template>
-    </Column>
+        <Column TableItem="RaceDto" Title="Start Time (Eastern)" Field="@(x => x.StartTime)" Sortable="true" DefaultSortColumn="true" />
 
-</ManagementListPage>
+        <Column TableItem="RaceDto" Title="Completed" Field="@(x => x.IsComplete)" Width="3%">
+            <Template>
+                @if (context.IsComplete)
+                {
+                    <span class="oi oi-check" />
+                }
+            </Template>
+        </Column>
+
+    </ManagementListPage>
+}
+else
+{
+    <ActionButton ButtonText="Back to List" OnClick="@(_ => ClearSelectedRace())" 
+                  MinimizePadding="false" CssClass="float-right" />
+
+    <CascadingValue Value="this">
+        <ManageDriverRaceEntries RaceId="_race.Id" />
+    </CascadingValue>
+}
 
 @code {
+    private RaceDto _race;
+
+
+    private Tracks.ListTracks _trackListPage;
+    private List<Track> _savedTracks;
+    private List<RaceDto> _savedRaces;
+
+    private string GetNameClass(RaceDto race)
+    {
+        return race.Type == Constants.RACE_TYPE_POINTS ? "font-weight-bold" : "font-italic";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _trackListPage = new Tracks.ListTracks();
+
+        await LoadItems();
+
+        await base.OnInitializedAsync();
+    }
+
+    public async Task<List<RaceDto>> LoadItems()
+    {
+        try
+        {
+            _savedTracks = await _trackListPage.LoadItems(httpClient, toaster);
+
+            _savedRaces = await httpClient.GetFromJsonAsync<List<RaceDto>>($"api/races");
+
+            var nascarRaces = await httpClient.GetFromJsonAsync<NascarRace[]>(GetScheduleUrl());
+
+            var savedRaceIds = _savedRaces.Select(x => x.NascarId).ToList();
+
+            var newRaces = nascarRaces.Where(x => !savedRaceIds.Contains(x.race_id)).ToList();
+            foreach (var race in newRaces)
+            {
+                await AddRace(race);
+            }
+
+            if (newRaces.Count > 0)
+            {
+                toaster.Add($"Saved {newRaces.Count} races", MatToastType.Success);
+                StateHasChanged();
+            }
+
+            return _savedRaces;
+        }
+        catch (Exception e)
+        {
+            toaster.Add(e.Message, MatToastType.Danger);
+            throw;
+        }
+    }
+
+    private string GetScheduleUrl()
+    {
+        return $"https://www.nascar.com/cacher/{YEAR}/{CUP_SERIES_ID}/race_list_basic.json";
+    }
+
+    private string GetEntryListUrl()
+    {
+        return $"https://www.nascar.com/cacher/{YEAR}/{CUP_SERIES_ID}/{_race.NascarId}/entryList.json";
+    }
+
+    private async Task AddRace(NascarRace r)
+    {
+        var track = _savedTracks.FirstOrDefault(x => x.NascarId == r.track_id);
+        if (track == null)
+        {
+            track = await _trackListPage.AddTrack(new NascarTrack
+            {
+                track_id = r.track_id,
+                track_name = r.track_name,
+                length = r.scheduled_distance / r.scheduled_laps
+            }, httpClient);
+
+            _savedTracks.Add(track);
+        }
+
+        var newRace = new RaceDto
+        {
+            NascarId = r.race_id,
+            Name = r.race_name,
+            Type = r.race_type_id,
+            TrackId = track.Id,
+            StartTime = r.date_scheduled
+        };
+
+        var response = await httpClient.PostAsJsonAsync($"api/races", newRace);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"Save Failed for {r.track_name}");
+        }
+
+        newRace.Id = await response.Content.ReadFromJsonAsync<int>();
+
+        _savedRaces.Add(newRace);
+    }
+
+    public void ClearSelectedRace()
+    {
+        _race = null;
+    }
+
     private void ShowEntries(RaceDto race)
     {
-        if (race == null) return;
-
-        _navigationManager.NavigateTo($"races/{race.Id}/entries");
+        if (race.Type == Constants.RACE_TYPE_NONPOINTS) return;
+        _race = race;
+        StateHasChanged();
     }
 }

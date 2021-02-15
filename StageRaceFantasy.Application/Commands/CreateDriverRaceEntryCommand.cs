@@ -28,6 +28,8 @@ namespace StartAndPark.Application
         {
             var raceId = request.RaceId;
             var driverId = request.DriverId;
+            var carNum = request.CarNumber;
+            var tier = request.Tier;
 
             var raceEntryExists = await _dbContext.DriverRaceEntries
                 .AnyAsync(x => x.RaceId == raceId && x.DriverId == driverId, cancellationToken);
@@ -43,6 +45,8 @@ namespace StartAndPark.Application
             {
                 RaceId = raceId,
                 DriverId = driverId,
+                CarNumber = carNum,
+                Tier = tier
             };
 
             await _dbContext.DriverRaceEntries.AddAsync(driverRaceEntry, cancellationToken);

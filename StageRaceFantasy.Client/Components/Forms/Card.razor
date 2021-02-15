@@ -1,0 +1,23 @@
+﻿
+@if (ShowCard)
+{
+    <div class="card bg-light">
+        <div class="card-header">@Header</div>
+
+        <div class="card-body @BodyCssClass">@Body</div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public RenderFragment Header { get; set; }
+
+    [Parameter]
+    public RenderFragment Body { get; set; }
+
+    [Parameter]
+    public bool ShowCard { get; set; } = true;
+
+    [Parameter]
+    public string BodyCssClass { get; set; }
+} 

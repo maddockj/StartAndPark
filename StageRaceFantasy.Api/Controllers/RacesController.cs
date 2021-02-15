@@ -38,6 +38,26 @@ namespace StartAndPark.Server.Controllers
             //    .ToListAsync();
         }
 
+        [HttpGet("{id}/entries2")]
+        public async Task<ActionResult<IEnumerable<DriverRaceEntryDto>>> GetEntries(int id)
+        {
+            return await _context.DriverRaceEntries
+                .Include(x => x.Race)
+                .Include(x => x.Driver)
+                .Where(x => x.RaceId == id)
+                .Select(x => new DriverRaceEntryDto
+                {
+                    RaceId = x.RaceId,
+                    NascarRaceId = x.Race.NascarId,
+                    DriverId = x.DriverId,
+                    NascarDriverId = x.Driver.NascarId,
+                    Name = x.Driver.Name,
+                    CarNumber = x.CarNumber,
+                    Tier = x.Tier
+                })
+                .ToListAsync();
+        }
+
         // GET: api/Races/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Race>> GetRace(int id)
@@ -86,7 +106,7 @@ namespace StartAndPark.Server.Controllers
         // POST: api/Races
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<int>> PostRace(CreateTrackCommand race)
+        public async Task<ActionResult<int>> PostRace(CreateRaceCommand race)
         {
             var result = await _mediator.Send(race);
 

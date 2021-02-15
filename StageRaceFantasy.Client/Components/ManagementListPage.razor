@@ -11,7 +11,10 @@
 <p>
     <span class="h1">@Title</span>
 
-    <ActionButton Action="add" ButtonText="New" OnClick="Add" MinimizePadding="false" CssClass="float-right" />
+    @if (DoAdd)
+    {
+        <ActionButton Action="add" ButtonText="New" OnClick="Add" MinimizePadding="false" CssClass="float-right" />
+    }
 </p>
 
 @if (Items == null)
@@ -24,11 +27,15 @@
            RowClickAction="@(RowClickAction ?? Edit)">
         @*<Column TableItem="TItem" Title="Id" Field="@IdField" Width="5%" />*@
 
-        <ActionButtonColumn TableItem="TItem" Action="edit" OnClick="@Edit" />
+        @if (DoEdit)
+        {
+            <ActionButtonColumn TableItem="TItem" Action="edit" OnClick="@Edit" />
+        }
 
-        <ActionButtonColumn TableItem="TItem" Action="delete" OnClick="@Delete" />
-
-        <Column TableItem="TItem" Title="@NameFieldTitle" Field="@NameField" Sortable="true" DefaultSortColumn="true" />
+        @if (DoDelete)
+        {
+            <ActionButtonColumn TableItem="TItem" Action="delete" OnClick="@Delete" />
+        }
 
         @ChildContent
 
@@ -39,6 +46,15 @@
 </div>
 
 @code {
+    [Parameter]
+    public bool DoAdd { get; set; }
+
+    [Parameter]
+    public bool DoEdit { get; set; }
+
+    [Parameter]
+    public bool DoDelete { get; set; }
+
     /// <summary>
     /// how many items per page
     /// </summary>
@@ -85,17 +101,16 @@
     [Parameter]
     public Action<TItem> RowClickAction { get; set; }
 
+    [Parameter]
+    public IEnumerable<TItem> Items { get; set; }
 
-    // the full item list for this list view
-    protected TItem[] Items { get; set; }
 
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    await LoadItems();
+    //}
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadItems();
-    }
-
-    protected async Task LoadItems()
+    public async Task LoadItems()
     {
         Items = await httpClient.GetFromJsonAsync<TItem[]>($"api/{ManagePath.Trim()}");
     }
@@ -110,7 +125,7 @@
     // edit the selected item
     private void Edit(TItem item)
     {
-        if (item == null) return;
+        if (!DoEdit || item == null) return;
 
         _navigationManager.NavigateTo(GetEditorPath(item));
     }

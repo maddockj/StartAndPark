@@ -39,7 +39,7 @@ namespace StartAndPark.Application
                 .Include(x => x.Race)
                 .Include(x => x.Driver)
                 .Where(x => x.RaceId == raceId)
-                .OrderBy(x => x.Driver.LastName)
+                .OrderBy(x => x.Driver.Name)
                 .ProjectTo<DriverRaceEntryDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
@@ -47,7 +47,7 @@ namespace StartAndPark.Application
 
             var notEnteredDrivers = await _dbContext.Drivers
                 .Where(x => !enteredDriverIds.Contains(x.Id))
-                .OrderBy(x => x.LastName)
+                .OrderBy(x => x.Name)
                 .ProjectTo<DriverRaceEntryDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 

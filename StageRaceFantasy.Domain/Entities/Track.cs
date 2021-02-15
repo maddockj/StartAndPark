@@ -8,8 +8,18 @@ namespace StartAndPark.Domain.Entities
     {
         public int Id { get; set; }
 
+        [Required]
+        public int NascarId { get; set; }
+
         [Required] 
         public string Name { get; set; }
+
+        public string Surface { get; set; }
+
+        public string Type { get; set; }
+
+        [Column(TypeName ="decimal(18,3)")]
+        public decimal Length { get; set; }
 
         public List<Race> Races { get; set; }
 

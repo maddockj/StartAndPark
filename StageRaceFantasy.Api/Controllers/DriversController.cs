@@ -23,7 +23,7 @@ namespace StartAndPark.Server.Controllers
         public async Task<ActionResult<IEnumerable<Driver>>> GetDrivers()
         {
             return await _context.Drivers
-                .OrderBy(x => x.LastName)
+                .OrderBy(x => x.Name)
                 .ToListAsync();
         }
 

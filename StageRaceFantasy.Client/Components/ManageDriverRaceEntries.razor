@@ -1,0 +1,251 @@
+﻿@using StartAndPark.Client.Pages.Drivers
+@using StartAndPark.Application
+@using StartAndPark.Domain
+@using StartAndPark.Client.Models
+@using StartAndPark.Client.Components.Forms
+@using static StartAndPark.Client.Constants
+@using BlazorTable
+
+@inject HttpClient httpClient
+@inject NavigationManager navigationManager
+@inject IMatToaster toaster
+
+<h1>@_race?.Name</h1>
+<h3>Driver Entries</h3>
+
+<div class="container-fluid">
+
+    <EditForm Model="@this">
+        <div class="card-group">
+            @foreach (var tier in _assigned.Keys.OrderBy(x => x))
+            {
+                <Card BodyCssClass="p-0">
+                    <Header>Tier @tier</Header>
+                    <Body>
+                        <Table TableItem="DriverRaceEntryDto" Items="@_assigned[tier]" PageSize="50">
+                            <Column TableItem="DriverRaceEntryDto" Title="Car" Field="x => x.CarNumber" />
+                            <Column TableItem="DriverRaceEntryDto" Title="Driver" Field="x => x.Name" />
+                            <Column TableItem="DriverRaceEntryDto" Title="Tier" Field="x => x.Tier">
+                                <Template Context="entry">
+                                    @foreach (var tier in Tier.TIERS.Where(t => entry.Tier != t))
+                                    {
+                                        <ActionButton OnClick="@(e => AssignTier(entry, tier))" ButtonText="@tier" CssClass="mr-1" />
+                                    }
+                                </Template>
+                            </Column>
+                        </Table>
+                    </Body>
+                </Card>
+            }
+
+            <Card ShowCard="_unassigned.Any()" BodyCssClass="p-0">
+                <Header>Unassigned</Header>
+                <Body>
+                    <Table TableItem="DriverRaceEntryDto" Items="@_unassigned" PageSize="50">
+                        <Column TableItem="DriverRaceEntryDto" Title="Car" Field="x => x.CarNumber" />
+                        <Column TableItem="DriverRaceEntryDto" Title="Driver" Field="x => x.Name" />
+                        <Column TableItem="DriverRaceEntryDto" Title="Tier" Field="x => x.Tier">
+                            <Template Context="entry">
+                                @foreach (var tier in Tier.TIERS.Where(t => entry.Tier != t))
+                                {
+                                    <ActionButton OnClick="@(e => AssignTier(entry, tier))" ButtonText="@tier" CssClass="mr-1" />
+                                }
+                            </Template>
+                        </Column>
+                    </Table>
+                </Body>
+            </Card>
+        </div>
+    </EditForm>
+
+</div>
+
+@code {
+    [Parameter]
+    public int RaceId { get; set; }
+
+    private ListDrivers _driverListPage;
+    private List<Driver> _savedDrivers;
+    private List<DriverRaceEntryDto> _savedEntries;
+
+    private Table<DriverRaceEntryDto> _table;
+
+    private Race _race;
+    private List<DriverRaceEntryDto> _unassigned = new List<DriverRaceEntryDto>();
+    private Dictionary<string, List<DriverRaceEntryDto>> _assigned = new Dictionary<string, List<DriverRaceEntryDto>>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _driverListPage = new ListDrivers();
+
+        _race = await httpClient.GetFromJsonAsync<Race>($"api/races/{RaceId}");
+
+        await LoadItems(_race, httpClient, toaster);
+
+        _unassigned = _savedEntries.Where(x => x.Tier == null).ToList();
+
+        _assigned = _savedEntries
+            .Where(x => x.Tier != null)
+            .GroupBy(x => x.Tier)
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        await base.OnInitializedAsync();
+    }
+
+    private string GetEntryListUrl(Race race)
+    {
+        return $"https://www.nascar.com/cacher/{YEAR}/{CUP_SERIES_ID}/{race.NascarId}/entryList.json";
+    }
+
+    public async Task<List<DriverRaceEntryDto>> LoadItems(Race race, HttpClient httpClient, IMatToaster toaster)
+    {
+        try
+        {
+            _savedDrivers = await _driverListPage.LoadItems(httpClient, toaster);
+
+            _savedEntries = await httpClient.GetFromJsonAsync<List<DriverRaceEntryDto>>($"api/races/{race.Id}/entries2");
+
+            var nascarEntries = await httpClient.GetFromJsonAsync<List<NascarDriver>>(GetEntryListUrl(race));
+
+            var savedEntryDriverIds = _savedEntries.Select(x => x.NascarDriverId).ToList();
+
+            var newEntries = nascarEntries.Where(x => !savedEntryDriverIds.Contains(x.driver_id)).ToList();
+            foreach (var entry in newEntries)
+            {
+                await AddEntry(race, entry);
+            }
+
+            if (newEntries.Count > 0)
+            {
+                toaster.Add($"Saved {newEntries.Count} entries", MatToastType.Success);
+                StateHasChanged();
+            }
+
+            return _savedEntries;
+        }
+        catch (Exception e)
+        {
+            toaster.Add(e.Message, MatToastType.Danger);
+            throw;
+        }
+    }
+
+    private async Task AddEntry(Race r, NascarDriver d)
+    {
+        var driver = _savedDrivers.FirstOrDefault(x => x.NascarId == d.driver_id);
+        if (driver == null)
+        {
+            driver = await AddDriver(d);
+
+            _savedDrivers.Add(driver);
+        }
+
+        var newEntry = new DriverRaceEntryDto
+        {
+            RaceId = r.Id,
+            NascarRaceId = r.NascarId,
+            DriverId = driver.Id,
+            NascarDriverId = driver.NascarId,
+            Name = driver.Name,
+            CarNumber = d.vehicle_number
+        };
+
+        await EnterDriver(newEntry, false);
+
+        _savedEntries.Add(newEntry);
+    }
+
+    private async Task<Driver> AddDriver(NascarDriver d)
+    {
+        var newDriver = new Driver
+        {
+            NascarId = d.driver_id,
+            Name = d.driver_name
+        };
+
+        var response = await httpClient.PostAsJsonAsync("api/drivers", newDriver);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"Save Failed for {d.driver_name}");
+        }
+
+        newDriver = await response.Content.ReadFromJsonAsync<Driver>();
+
+        return newDriver;
+    }
+
+    private async Task AssignTier(DriverRaceEntryDto raceEntry, string tier)
+    {
+        var oldTier = raceEntry.Tier;
+
+        if (raceEntry == null || tier == null || tier == oldTier) return;
+
+        raceEntry.Tier = tier;
+
+        var isEntered = _unassigned.Remove(raceEntry);
+
+        if (oldTier != null)
+        {
+            _assigned[oldTier].Remove(raceEntry);
+        }
+
+        if (!_assigned.Keys.Contains(tier))
+        {
+            _assigned.Add(tier, new List<DriverRaceEntryDto>());
+        }
+        _assigned[tier].Add(raceEntry);
+
+        if (isEntered)
+        {
+            await UpdateRaceEntry(raceEntry, true);
+        }
+        else
+        {
+            await EnterDriver(raceEntry, true);
+        }
+    }
+
+    private async Task EnterDriver(DriverRaceEntryDto raceEntry, bool doNotifySuccess)
+    {
+        raceEntry.IsEntered = true;
+
+        var addRaceEntryDto = new CreateDriverRaceEntryDto()
+        {
+            DriverId = raceEntry.DriverId,
+            RaceId = this.RaceId,
+            CarNumber = raceEntry.CarNumber,
+            Tier = raceEntry.Tier
+        };
+
+        var response = await httpClient.PostAsJsonAsync($"api/races/{RaceId}/entries", addRaceEntryDto);
+        CheckResponse(response, $"Entered {raceEntry.Name}", doNotifySuccess);
+    }
+
+    private async Task UpdateRaceEntry(DriverRaceEntryDto raceEntry, bool doNotifySuccess)
+    {
+        var updatedEntry = new UpdateDriverRaceEntryCommand(
+            raceEntry.RaceId,
+            raceEntry.DriverId,
+            raceEntry.CarNumber,
+            raceEntry.Tier);
+
+        var response = await httpClient.PutAsJsonAsync($"api/races/{RaceId}/entries/{raceEntry.DriverId}", updatedEntry);
+        CheckResponse(response, $"Updated {raceEntry.Name}", doNotifySuccess);
+    }
+
+    private bool CheckResponse(HttpResponseMessage response, string successMsg, bool doNotifySuccess)
+    {
+        if (!response.IsSuccessStatusCode)
+        {
+            toaster.Add("Request Failed", MatToastType.Danger);
+            return false;
+        }
+
+        if (doNotifySuccess)
+        {
+            toaster.Add(successMsg, MatToastType.Success);
+        }
+        return true;
+    }
+}

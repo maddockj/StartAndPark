@@ -9,6 +9,10 @@ namespace StartAndPark.Application
     public record CreateTrackCommand : IApplicationCommand<int>
     {
         public string Name { get; init; }
+        public int NascarId { get; set; }
+        public string Surface { get; set; }
+        public string Type { get; set; }
+        public decimal Length { get; set; }
     }
 
     public class CreateTrackCommandHandler : ApplicationRequestHandler<CreateTrackCommand, int>
@@ -25,6 +29,10 @@ namespace StartAndPark.Application
             var track = new Track()
             {
                 Name = request.Name,
+                NascarId = request.NascarId,
+                Surface = request.Surface,
+                Type = request.Type,
+                Length = request.Length
             };
 
             _dbContext.Tracks.Add(track);

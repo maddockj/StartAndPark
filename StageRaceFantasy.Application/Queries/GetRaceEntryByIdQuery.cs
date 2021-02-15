@@ -42,7 +42,6 @@ namespace StartAndPark.Application
             var result = _mapper.Map<GetRaceEntryByIdVm>(entry);
 
             var race = await _dbContext.Races.FindAsync(new object[]{ raceId }, cancellationToken);
-            result.TeamSize = race.TeamSize;
 
             return new(result);
         }

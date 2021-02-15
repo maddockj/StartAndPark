@@ -15,11 +15,14 @@ namespace StartAndPark.Application
     public class RaceDto : IMapFrom
     {
         public int Id { get; set; }
+        public int NascarId { get; set; }
         public string Name { get; set; }
+        public int Type { get; set; }
         public int TrackId { get; set; }
         public string TrackName { get; set; }
         public DateTime? StartTime { get; set; }
-        public bool IsComplete { get; set; }
+        public int? WinningDriverId { get; set; }
+        public bool IsComplete => WinningDriverId.HasValue;
 
         public void Mapping(Profile profile)
         {

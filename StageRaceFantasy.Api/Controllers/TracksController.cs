@@ -83,6 +83,11 @@ namespace StartAndPark.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<int>> PostTrack(CreateTrackCommand track)
         {
+            if (_context.Tracks.Any(e => e.NascarId == track.NascarId))
+            {
+                return Conflict();
+            }
+
             var result = await _mediator.Send(track);
 
             return ResponseHelpers.BuildCreatedAtResponse(

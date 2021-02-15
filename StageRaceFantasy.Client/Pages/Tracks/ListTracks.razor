@@ -1,9 +1,91 @@
 ﻿@page "/tracks"
 
+@using BlazorTable
 @using StartAndPark.Client.Components
+@using StartAndPark.Client.Models
+
+@inject HttpClient httpClient
+@inject IMatToaster toaster
 
 <ManagementListPage TItem="Track"
                     Title="Tracks"
                     IdField="@(x => x.Id)"
                     NameField="@(x => x.Name)"
-                    ManagePath="tracks" />
+                    ManagePath="tracks"
+                    Items="@_savedTracks">
+
+    <Column TableItem="Track" Title="Name" Field="@(x => x.Name)" Sortable="true" DefaultSortColumn="true" />
+
+</ManagementListPage>
+
+@code {
+    private List<Track> _savedTracks;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadItems(httpClient, toaster);
+
+        await base.OnInitializedAsync();
+    }
+
+    public async Task<List<Track>> LoadItems(HttpClient httpClient, IMatToaster toaster)
+    {
+        try
+        {
+            _savedTracks = await httpClient.GetFromJsonAsync<List<Track>>($"api/tracks");
+
+            var nascarTracks = await httpClient.GetFromJsonAsync<NascarTrack[]>(GetTracksUrl());
+
+            var savedTrackIds = _savedTracks.Select(x => x.NascarId).ToList();
+
+            var newTracks = nascarTracks.Where(x => !savedTrackIds.Contains(x.track_id)).ToList();
+            foreach (var track in newTracks)
+            {
+                await AddTrack(track,  httpClient);
+            }
+
+            if (newTracks.Count > 0)
+            {
+                toaster.Add($"Saved {newTracks.Count} tracks", MatToastType.Success);
+                StateHasChanged();
+            }
+
+            return _savedTracks;
+        }
+        catch (Exception e)
+        {
+            toaster.Add(e.Message, MatToastType.Danger);
+            throw;
+        }
+    }
+
+    private string GetTracksUrl()
+    {
+        return $"https://www.nascar.com/cacher/tracks/tracks-feed.json";
+    }
+
+    public async Task<Track> AddTrack(NascarTrack t, HttpClient httpClient)
+    {
+        var newTrack = new Track
+        {
+            NascarId = t.track_id,
+            Name = t.track_name,
+            Surface = t.track_surface,
+            Type = t.track_type,
+            Length = t.length
+        };
+
+        var response = await httpClient.PostAsJsonAsync($"api/tracks", newTrack);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"Save Failed for {t.track_name}");
+        }
+
+        newTrack.Id = await response.Content.ReadFromJsonAsync<int>();
+
+        _savedTracks.Add(newTrack);
+
+        return newTrack;
+    }
+} 

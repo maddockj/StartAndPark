@@ -1,0 +1,80 @@
+﻿@page "/races2"
+
+@using BlazorTable
+@using StartAndPark.Application
+@using StartAndPark.Client.Models 
+@using StartAndPark.Client.Components
+@using StartAndPark.Client.Components.Forms
+@using static StartAndPark.Client.Constants
+
+@inject NavigationManager _navigationManager
+@inject HttpClient httpClient
+
+@if (_race == null)
+{
+    <NascarListPage TItem="NascarRace"
+                    Title="Races"
+                    IdField="@(x => x.race_id)"
+                    NameField="@(x => x.race_name)"
+                    DataUrl="@GetScheduleUrl()"
+                    RowClickAction="async x => await ShowEntries(x)">
+
+        <Column TableItem="NascarRace" Title="Type" Field="@(x => x.race_type_id)" Sortable="true" />
+
+        <Column TableItem="NascarRace" Title="Race" Field="@(x => x.race_name)" Sortable="true" />
+
+        <Column TableItem="NascarRace" Title="Track" Field="@(x => x.track_name)" Sortable="true" />
+
+        <Column TableItem="NascarRace" Title="Start Time (Eastern)" Field="@(x => x.race_date)" Sortable="true" DefaultSortColumn="true" />
+
+        <Column TableItem="NascarRace" Title="laps" Field="@(x => x.actual_laps)" Sortable="true" />
+
+        <Column TableItem="NascarRace" Title="Completed" Field="@(x => x.IsComplete)" Width="3%">
+            <Template>
+                @if (context.IsComplete)
+                {
+                    <span class="oi oi-check" />
+                }
+            </Template>
+        </Column>
+
+    </NascarListPage>
+}
+else
+{
+    @*<ManageDriverRaceEntry2 Race="_race" Drivers="_entries" />*@
+}
+
+@code {
+    private NascarRace _race;
+
+    private List<NascarDriver> _entries;
+
+    private string GetScheduleUrl()
+    {
+        return $"https://www.nascar.com/cacher/{YEAR}/{CUP_SERIES_ID}/race_list_basic.json";
+    }
+
+    private string GetEntryListUrl(NascarRace race)
+    {
+        return $"https://www.nascar.com/cacher/{YEAR}/{CUP_SERIES_ID}/{race.race_id}/entryList.json";
+    }
+
+    private async Task ShowEntries(NascarRace race)
+    {
+        _race = race;
+        await UpdateEntries();
+        StateHasChanged();
+    }
+
+    private async Task UpdateEntries()
+    {
+        if (_race == null)
+        {
+            _entries?.Clear();
+            return;
+        }
+
+        _entries = await httpClient.GetFromJsonAsync<List<NascarDriver>>(GetEntryListUrl(_race));
+    }
+}
