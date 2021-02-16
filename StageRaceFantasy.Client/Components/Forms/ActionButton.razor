@@ -2,7 +2,7 @@
 
 @* Provides a convenient button component for one of a predefined set of actions to reduce repeat markup all over the place*@
 
-<button type="@_type"
+<button type="@GetButtonType()"
         data-toggle="tooltip"
         data-placement="top"
         class="@GetCssClass()"
@@ -76,6 +76,9 @@
     /// </summary>
     [Parameter]
     public string CssClass { get; set; }
+
+    [Parameter]
+    public string ButtonType { get; set; }
 
 
     #region private fields
@@ -166,5 +169,10 @@
     private string GetButtonText()
     {
         return (IsTextButton || ButtonText != null) ? $" {GetTitle()}" : null;
+    }
+
+    private string GetButtonType()
+    {
+        return ButtonType ?? _type;
     }
 }

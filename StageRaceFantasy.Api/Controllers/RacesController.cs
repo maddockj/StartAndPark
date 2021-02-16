@@ -103,6 +103,27 @@ namespace StartAndPark.Server.Controllers
                 .ToListAsync();
         }
 
+        [HttpGet("{id}/pickresults")]
+        public async Task<ActionResult<List<RacePickResultDto>>> GetPickResults(int id)
+        {
+            return await _context.RacePicks
+                .Include(x => x.Owner)
+                .Include(x => x.RaceEntries)
+                .ThenInclude(e => e.Driver)
+                .Where(x => x.RaceId == id)
+                .Select(x => new RacePickResultDto
+                {
+                    OwnerName = x.Owner.Name,
+                    Picks = x.RaceEntries.Select(e => new RacePickResultDto.Pick
+                    {
+                        DriverNascarId = e.Driver.NascarId,
+                        DriverName = e.Driver.Name,
+                        CarNumber = e.CarNumber
+                    }).ToList()
+                })
+                .ToListAsync();
+        }
+
         // PUT: api/Races/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

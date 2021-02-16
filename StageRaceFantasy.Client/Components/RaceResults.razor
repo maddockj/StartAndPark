@@ -1,0 +1,232 @@
+﻿
+@using BlazorTable
+@using StartAndPark.Application
+@using StartAndPark.Client.Models
+@using StartAndPark.Client.Components.Forms
+@using StartAndPark.Domain
+@using static StartAndPark.Client.Constants
+
+@inject HttpClient httpClient
+@inject IMatToaster toaster
+
+<style type="text/css">
+    .small-caps {
+        font-variant: small-caps;
+    }
+
+    .consolas {
+        font-family: Consolas;
+    }
+
+    th {
+        text-align: center;
+    }
+</style>
+
+<Table TableItem="RacePickResultDto" Items="SortedResults" PageSize="100">
+
+    <Column TableItem="RacePickResultDto" Title="Rank" Field="p => p.Rank" Align="Align.Right"
+            Sortable="true" DefaultSortDescending="true" Class="consolas" Width="1%">
+        <Template>@(context.Rank > 0 ? context.Rank.ToString() : "-" )</Template>
+    </Column>
+
+    <Column TableItem="RacePickResultDto" Title="League Points" Field="p => p.EventPoints" Align="Align.Right"
+            Sortable="true" DefaultSortDescending="true" Class="font-weight-bold consolas" Width="1%">
+        <Template>
+            @(context.EventPoints > 0 ? context.EventPoints.ToString() : "-" )
+        </Template>
+    </Column>
+
+    <Column TableItem="RacePickResultDto" Title="Driver Total" Field="p => p.Points" Align="Align.Right"
+            Sortable="true" DefaultSortDescending="true" Class="font-weight-bold consolas" Width="1%" />
+
+    <Column TableItem="RacePickResultDto" Title="Owner" Field="p => p.OwnerName"
+            Sortable="true" Class="small-caps font-weight-bold" />
+
+    @for (int i = 0; i < TIERS[YEAR]; i++)
+    {
+        int idx = i;
+        <Column TableItem="RacePickResultDto" Title="" Field="p => GetPoints(p, idx)"
+                Align="Align.Right" Type="typeof(decimal)" Class="consolas" Width="1%" />
+
+        <Column TableItem="RacePickResultDto" Title="@($"Driver {i+1}")"
+                Field="p => GetName(p, idx)" Type="typeof(string)" />
+    }
+
+</Table>
+
+@code {
+    [Parameter]
+    public int RaceId { get; set; }
+
+    [Parameter]
+    public int NascarRaceId { get; set; }
+
+    public IEnumerable<RacePickResultDto> SortedResults => _pickResults?.OrderByDescending(p => p.Points);
+
+    public NascarWeekendRace _race;
+    private List<RacePickResultDto> _pickResults;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await LoadItems();
+        }
+        catch (Exception e)
+        {
+            toaster.Add(e.Message, MatToastType.Danger);
+            throw;
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+    public async Task LoadItems()
+    {
+
+        var weekendUrl = $"https://www.nascar.com/cacher/{YEAR}/{CUP_SERIES_ID}/{NascarRaceId}/weekend-feed.json";
+        var _weekend = await httpClient.GetFromJsonAsync<NascarWeekend>(weekendUrl);
+        _race = _weekend.weekend_race[0];
+        var calculatedResults = PointsCalculator.CalculatePoints(_race);
+
+        _pickResults = await httpClient
+            .GetFromJsonAsync<List<RacePickResultDto>>($"api/races/{RaceId}/pickresults");
+
+        foreach (var r in _pickResults)
+        {
+            foreach (var p in r.Picks)
+            {
+                var pts = calculatedResults[p.DriverNascarId].Points;
+                p.Points = pts;
+            }
+        }
+
+        PointsCalculator.UpdateEventPoints(_pickResults);
+
+        await CalculateSuperlatives(calculatedResults.Values.ToList());
+    }
+
+    private async Task CalculateSuperlatives(List<CalculatedDriver> driverResults)
+    {
+        var allEntries = await httpClient.GetFromJsonAsync<List<DriverRaceEntryDto>>($"api/races/{RaceId}/entries2");
+
+        RacePickResultDto.Pick[] bestPicks = new RacePickResultDto.Pick[TIERS[YEAR]];
+        foreach (var dr in driverResults.OrderByDescending(x => x.Points))
+        {
+            var entry = allEntries.Find(x => x.NascarDriverId == dr.NascarDriverId);
+            var t = Tier.TIERS.IndexOf(entry.Tier);
+            for (int i = t; i >= 0; i--)
+            {
+                if (bestPicks[i] == null)
+                {
+                    bestPicks[i] = new RacePickResultDto.Pick
+                    {
+                        DriverNascarId = entry.NascarDriverId,
+                        DriverName = $"({entry.Tier}) {entry.Name}",
+                        CarNumber = entry.CarNumber,
+                        Points = dr.Points
+                    };
+                    break;
+                }
+            }
+        }
+
+        RacePickResultDto.Pick[] bestPicksT = new RacePickResultDto.Pick[TIERS[YEAR]];
+        foreach (var dr in driverResults.OrderByDescending(x => x.Points))
+        {
+            var entry = allEntries.Find(x => x.NascarDriverId == dr.NascarDriverId);
+            var i = Tier.TIERS.IndexOf(entry.Tier);
+            if (i < 0)
+            {
+                continue;
+            }
+            if (bestPicksT[i] == null)
+            {
+                bestPicksT[i] = new RacePickResultDto.Pick
+                {
+                    DriverNascarId = entry.NascarDriverId,
+                    DriverName = $"({entry.Tier}) {entry.Name}",
+                    CarNumber = entry.CarNumber,
+                    Points = dr.Points
+                };
+            }
+        }
+
+        RacePickResultDto.Pick[] worstPicks = new RacePickResultDto.Pick[TIERS[YEAR]];
+        foreach (var dr in driverResults.OrderBy(x => x.Points))
+        {
+            var entry = allEntries.Find(x => x.NascarDriverId == dr.NascarDriverId);
+            var t = Tier.TIERS.IndexOf(entry.Tier);
+            for (int i = t; i >= 0; i--)
+            {
+                if (worstPicks[i] == null)
+                {
+                    worstPicks[i] = new RacePickResultDto.Pick
+                    {
+                        DriverNascarId = entry.NascarDriverId,
+                        DriverName = $"({entry.Tier}) {entry.Name}",
+                        CarNumber = entry.CarNumber,
+                        Points = dr.Points
+                    };
+                    break;
+                }
+            }
+        }
+
+        RacePickResultDto.Pick[] worstPicksT = new RacePickResultDto.Pick[TIERS[YEAR]];
+        foreach (var dr in driverResults.OrderBy(x => x.Points))
+        {
+            var entry = allEntries.Find(x => x.NascarDriverId == dr.NascarDriverId);
+            var i = Tier.TIERS.IndexOf(entry.Tier);
+            if (i < 0)
+            {
+                continue;
+            }
+            if (worstPicksT[i] == null)
+            {
+                worstPicksT[i] = new RacePickResultDto.Pick
+                {
+                    DriverNascarId = entry.NascarDriverId,
+                    DriverName = $"({entry.Tier}) {entry.Name}",
+                    CarNumber = entry.CarNumber,
+                    Points = dr.Points
+                };
+            }
+        }
+
+        _pickResults.Add(new RacePickResultDto
+        {
+            OwnerName = "Best Possible",
+            Picks = bestPicks.ToList()
+        });
+
+        _pickResults.Add(new RacePickResultDto
+        {
+            OwnerName = "Best By Tier",
+            Picks = bestPicksT.ToList()
+        });
+
+        _pickResults.Add(new RacePickResultDto
+        {
+            OwnerName = "Worst Possible",
+            Picks = worstPicks.ToList()
+        });
+
+        _pickResults.Add(new RacePickResultDto
+        {
+            OwnerName = "Worst By Tier",
+            Picks = worstPicksT.ToList()
+        });
+    }
+
+    private decimal GetPoints(RacePickResultDto p, int i)
+    {
+        return i >= (p.Picks.Count) ? 0m : p.Picks.OrderByDescending(x => x.Points).ElementAt(i).Points;
+    }
+
+    private string GetName(RacePickResultDto p, int i)
+    {
+        return i >= (p.Picks.Count) ? "X" : p.Picks.OrderByDescending(x => x.Points).ElementAt(i).DriverName;
+    }
+}

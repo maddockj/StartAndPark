@@ -31,6 +31,7 @@
                     </Template>
                 </Column>
             }
+            <ActionButtonColumn TableItem="Owner" Action="save" OnClick="@Save" />
         </Table>
     </EditForm>
 
@@ -45,9 +46,11 @@
 
     private List<Owner> _owners;
 
-    private Dictionary<string, List<DriverRaceEntryDto>> _entries;
+    private List<DriverRaceEntryDto> _allEntries;
+    private Dictionary<string, List<DriverRaceEntryDto>> _entriesByTier;
 
     private Dictionary<int, RacePick> _picks;
+    private Dictionary<int, Dictionary<string, int>> _pickTierEntries;
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,13 +65,59 @@
 
         await LoadOwners();
 
-        var entries = await httpClient.GetFromJsonAsync<List<DriverRaceEntryDto>>($"api/races/{RaceId}/entries2");
-        _entries = entries.Where(x => x.Tier != null).GroupBy(x => x.Tier).ToDictionary(g => g.Key, g => g.ToList());
+        _allEntries = await httpClient.GetFromJsonAsync<List<DriverRaceEntryDto>>($"api/races/{RaceId}/entries2");
+        var entriesByTier = _allEntries.Where(x => x.Tier != null).GroupBy(x => x.Tier)
+            .ToDictionary(g => g.Key, g => g.ToList());
+        PopulateEntries(entriesByTier);
 
         var picks = await httpClient.GetFromJsonAsync<List<RacePick>>($"api/races/{RaceId}/picks");
         _picks = picks.ToDictionary(x => x.OwnerId);
 
+        _pickTierEntries = new Dictionary<int, Dictionary<string, int>>(_owners.Count);
+        foreach (var ownerPicks in picks)
+        {
+            var oid = ownerPicks.OwnerId;
+            int[] tierPicks = new int[Tier.TIERS.Count];
+            foreach (var e in ownerPicks.RaceEntries)
+            {
+                var t = Tier.TIERS.IndexOf(e.Tier);
+                while (tierPicks[t] > 0)
+                {
+                    t--;
+                    if (t < 0)
+                    {
+                        toaster.Add($"Too many drivers for owner {oid}", MatToastType.Danger);
+                        return;
+                    }
+                }
+                tierPicks[t] = e.Id;
+            }
 
+            _pickTierEntries.Add(oid, new Dictionary<string, int>(Tier.TIERS.Count));
+
+            for (int i = 0; i < tierPicks.Length; i++)
+            {
+                _pickTierEntries[oid].Add(Tier.TIERS[i], tierPicks[i]);
+            }
+        }
+    }
+
+    private void PopulateEntries(Dictionary<string, List<DriverRaceEntryDto>> entriesByTier)
+    {
+        _entriesByTier = new Dictionary<string, List<DriverRaceEntryDto>>(Tier.TIERS.Count);
+        var runningList = new List<DriverRaceEntryDto>(Tier.TIERS.Count);
+        for (int i = Tier.TIERS.Count - 1; i >= 0; i--)
+        {
+            string tier = Tier.TIERS[i];
+            runningList.AddRange(entriesByTier[tier]);
+            _entriesByTier.Add(tier, new List<DriverRaceEntryDto>());
+            _entriesByTier[tier].AddRange(runningList.OrderBy(e => Convert.ToInt32(e.CarNumber)));
+        }
+    }
+
+    private IEnumerable<DriverRaceEntryDto> GetEntries(string tier)
+    {
+        return (_entriesByTier?.ContainsKey(tier) ?? false) ? _entriesByTier[tier] : new List<DriverRaceEntryDto>();
     }
 
     private async Task LoadOwners()
@@ -115,40 +164,73 @@
         return _owners?.Where(o => o.Id == id)?.FirstOrDefault();
     }
 
-    private IEnumerable<DriverRaceEntryDto> GetEntries(string tier)
+    private void initOwnerPickTier(int ownerId, string tier)
     {
-        List<DriverRaceEntryDto> retList = new List<DriverRaceEntryDto>();
-        int idx = Tier.TIERS.IndexOf(tier);
-        var validTiers = Tier.TIERS.Where(t => Tier.TIERS.IndexOf(t) >= idx);
-        _entries.Where(x => validTiers.Contains(x.Key)).OrderBy(x => x.Key).ToList()
-            .ForEach(x => retList.AddRange(x.Value.OrderBy(e => Convert.ToInt32(e.CarNumber))));
-        return retList;
+        if (!_pickTierEntries.ContainsKey(ownerId))
+        {
+            _pickTierEntries.Add(ownerId, new Dictionary<string, int>(Tier.TIERS.Count));
+        }
+        if (!_pickTierEntries[ownerId].ContainsKey(tier))
+        {
+            _pickTierEntries[ownerId].Add(tier, 0);
+        }
     }
 
     private int? GetEntryId(Owner o, string tier)
     {
-        var pick = _picks.ContainsKey(o.Id) ? _picks[o.Id] : null;
-        var entry = pick?.RaceEntries?.Where(x => x.Tier == tier)?.FirstOrDefault();
-        return entry?.Id;
+        initOwnerPickTier(o.Id, tier);
+        return _pickTierEntries[o.Id][tier];
+        //var pick = _picks.ContainsKey(o.Id) ? _picks[o.Id] : null;
+        //var entry = pick?.RaceEntries?.Where(x => x.Tier == tier)?.FirstOrDefault();
+        //return entry?.Id;
     }
 
     private async Task PickChanged(Owner o, string tier, ChangeEventArgs e)
     {
-        int? entryId = int.TryParse(e.Value.ToString(), out int i) ? (int?)i : null;
+        initOwnerPickTier(o.Id, tier);
+        int oldEntryId = _pickTierEntries[o.Id][tier];
 
-        var cmd = new SetRacePickCommand(o.Id, RaceId, tier, entryId);
+        int newEntryId = int.TryParse(e.Value.ToString(), out int i) ? i : 0;
 
-        //toaster.Add($"SetRacePickCommand {e.Value.GetType().Name} {e.Value} should equal {entryId}", MatToastType.Info);
+        _pickTierEntries[o.Id][tier] = newEntryId;
+        return;
 
+        //if (oldEntryId == newEntryId)
+        //{
+        //    toaster.Add($"Same Pick, nothing to update", MatToastType.Warning);
+        //}
+
+        //var cmd = new SetRacePickCommand(o.Id, RaceId, tier, newEntryId, oldEntryId);
+
+        ////toaster.Add($"SetRacePickCommand {e.Value.GetType().Name} {e.Value} should equal {entryId}", MatToastType.Info);
+
+        //var response = await httpClient.PutAsJsonAsync($"api/owners/{o.Id}/picks", cmd);
+
+        //if (!response.IsSuccessStatusCode)
+        //{
+        //    toaster.Add($"Update Failed for {o.Name} tier {tier} entry {newEntryId}", MatToastType.Danger);
+        //}
+        //else
+        //{
+        //    toaster.Add($"Saved Pick", MatToastType.Success);
+        //}
+
+        //StateHasChanged();
+    }
+
+    private async Task Save(Owner o)
+    {
+        var pickedEntryIds = _pickTierEntries[o.Id].Select(x => x.Value).ToList();
+        var cmd = new SetRacePickCommand(o.Id, RaceId, pickedEntryIds);
         var response = await httpClient.PutAsJsonAsync($"api/owners/{o.Id}/picks", cmd);
 
         if (!response.IsSuccessStatusCode)
         {
-            toaster.Add($"Update Failed for {o.Name} tier {tier} entry {entryId}", MatToastType.Danger);
+            toaster.Add($"Update Failed for {o.Name}", MatToastType.Danger);
         }
         else
         {
-            toaster.Add($"Saved Pick", MatToastType.Success);
+            toaster.Add($"Saved Picks for {o.Name}", MatToastType.Success);
         }
     }
 } 

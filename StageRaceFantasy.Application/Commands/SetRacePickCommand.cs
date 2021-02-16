@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 
 namespace StartAndPark.Application
 {
-    public record SetRacePickCommand(int OwnerId, int RaceId, string Tier, int? EntryId) : IApplicationCommand { }
+    //public record SetRacePickCommand(int OwnerId, int RaceId, string Tier, int? NewEntryId, int? OldEntryId) : IApplicationCommand { }
+    public record SetRacePickCommand(int OwnerId, int RaceId, List<int> RaceEntryIds) : IApplicationCommand { }
 
     public class SetRacePickHandler : ApplicationRequestHandler<SetRacePickCommand>
     {
@@ -23,42 +24,47 @@ namespace StartAndPark.Application
         {
             var ownerId = request.OwnerId;
             var raceId = request.RaceId;
-            var tier = request.Tier;
-            var entryId = request.EntryId;
+            //var tier = request.Tier;
+            //var newEntryId = request.NewEntryId;
+            //var oldEntryId = request.OldEntryId;
+            var raceEntryIds = request.RaceEntryIds;
 
             Console.WriteLine($"SetRacePickCommand {request}");
 
-            if (string.IsNullOrWhiteSpace(tier)) return BadRequest();
+            //if (string.IsNullOrWhiteSpace(tier)) return BadRequest();
+            if (raceEntryIds == null) return BadRequest();
 
             var raceOk = await _dbContext.Races.AnyAsync(x => x.Id == raceId, cancellationToken);
             var ownerOk = await _dbContext.Owners.AnyAsync(x => x.Id == ownerId, cancellationToken);
-            var entry = await _dbContext.RaceEntries.FindAsync(entryId);
-            var entryOk = entryId == null || entry != null;
+            //var entry = await _dbContext.RaceEntries.FindAsync(newEntryId);
+            //var entryOk = newEntryId == null || entry != null;
+            List<RaceEntry> entries = await _dbContext.RaceEntries
+                .Where(x => raceEntryIds.Contains(x.Id))
+                .ToListAsync();
 
-            if (!raceOk || !ownerOk || !entryOk) return NotFound();
+            var entriesOk = raceEntryIds.Count == entries.Count;
 
-            var existingPick = await _dbContext.RacePicks
+            if (!raceOk || !ownerOk || !entriesOk) return NotFound();
+
+            var racePick = await _dbContext.RacePicks
                 .Include(x => x.RaceEntries)
                 .Where(x => x.OwnerId == ownerId && x.RaceId == raceId)
                 .FirstOrDefaultAsync();
 
-            var racePick = existingPick ?? new RacePick()
+            if (racePick == null)
             {
-                RaceId = raceId,
-                OwnerId = ownerId,
-                RaceEntries = new List<RaceEntry>()
-            };
+                racePick = new RacePick()
+                {
+                    RaceId = raceId,
+                    OwnerId = ownerId,
+                    RaceEntries = entries
+                };
 
-            racePick.RaceEntries.RemoveAll(x => x.Tier == tier);
-
-            if (entry != null)
-            {
-                racePick.RaceEntries.Add(entry);
-            }
-
-            if (existingPick == null)
-            {
                 await _dbContext.RacePicks.AddAsync(racePick, cancellationToken);
+            }
+            else
+            {
+                racePick.RaceEntries = entries;
             }
 
             await _dbContext.SaveChangesAsync(cancellationToken);

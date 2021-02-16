@@ -1,12 +1,20 @@
 ﻿@page "/"
 
+@using StartAndPark.Application
 @using StartAndPark.Client.Models
+@using StartAndPark.Client.Components
 @using StartAndPark.Client.Components.Forms
+@using static StartAndPark.Client.Constants
 
 @inject HttpClient httpClient
 @inject IMatToaster toaster
 
-@if (_liveRace != null)
+@if (_currentRace != null)
+{
+    <h2>Current Race: @_currentRace.Name</h2>
+    <RaceResults RaceId="@_currentRace.Id" NascarRaceId="@_currentRace.NascarId" />
+}
+else if (_liveRace != null)
 {
     <h2>Live Race: @_liveRace.run_name</h2>
     @foreach (var vehicle in _liveRace.vehicles.OrderBy(v => v.running_position))
@@ -16,15 +24,16 @@
         </InputGroup>
     }
 }
-else if (_currentRace != null)
-{
-    <h2>Current Race: @_currentRace.Name</h2>
-}
 
 @code {
     private Race _currentRace;
 
     private NascarLiveRace _liveRace;
+
+    //private NascarWeekend _weekend;
+    //private NascarWeekendRace _weekendRace;
+    //private Dictionary<int, CalculatedDriver> _calculatedResults;
+    //private List<RacePickResultDto> _pickResults;
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,8 +54,25 @@ else if (_currentRace != null)
     {
         _currentRace = await httpClient.GetFromJsonAsync<Race>("api/races/current");
 
-        var liveRaceUrl = $"https://www.nascar.com/live/feeds/series_1/{_currentRace.NascarId}/live_feed.json";
-        _liveRace = await httpClient.GetFromJsonAsync<NascarLiveRace>(liveRaceUrl);
+        //var liveRaceUrl = $"https://www.nascar.com/live/feeds/series_1/{_currentRace.NascarId}/live_feed.json";
+        //_liveRace = await httpClient.GetFromJsonAsync<NascarLiveRace>(liveRaceUrl);
+
+        //var weekendUrl = $"https://www.nascar.com/cacher/{YEAR}/{CUP_SERIES_ID}/{_currentRace.NascarId}/weekend-feed.json";
+        //_weekend = await httpClient.GetFromJsonAsync<NascarWeekend>(weekendUrl);
+        //_weekendRace = _weekend.weekend_race[0];
+        //_calculatedResults = PointsCalculator.CalculatePoints(_weekendRace);
+
+        //_pickResults = await httpClient
+        //    .GetFromJsonAsync<List<RacePickResultDto>>($"api/races/{_currentRace.Id}/pickresults");
+
+        //foreach (var r in _pickResults)
+        //{
+        //    foreach (var p in r.Picks)
+        //    {
+        //        var pts = _calculatedResults[p.DriverNascarId].Points;
+        //        p.Points = pts;
+        //    }
+        //}
     }
 
 }

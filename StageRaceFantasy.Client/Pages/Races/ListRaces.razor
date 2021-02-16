@@ -19,7 +19,10 @@
                         NameField="@(x => x.Name)"
                         ManagePath="races"
                         Items="@_savedRaces"
-                        RowClickAction="x => ShowEntries(x)">
+                        RowClickAction="x => ShowResults(x)">
+
+        <ActionButtonColumn TableItem="RaceDto" ButtonText="Results" OnClick="@ShowResults" 
+                            DoHide="@(x => x.Type == RACE_TYPE_NONPOINTS)" />
 
         <ActionButtonColumn TableItem="RaceDto" ButtonText="Picks" OnClick="@ShowPicks" 
                             DoHide="@(x => x.Type == RACE_TYPE_NONPOINTS)" />
@@ -60,6 +63,12 @@ else
     else if ("picks".Equals(_mode))
     {
         <Picks RaceId="_race.Id" />
+    }
+    else if ("results".Equals(_mode))
+    {
+        <h1>@_race?.Name</h1>
+        <h3>Results</h3>
+        <RaceResults RaceId="_race.Id" NascarRaceId="_race.NascarId" />
     }
 }
 
@@ -186,5 +195,10 @@ else
     private void ShowPicks(RaceDto race)
     {
         SetMode(race, "picks");
+    }
+
+    private void ShowResults (RaceDto race)
+    {
+        SetMode(race, "results");
     }
 }
